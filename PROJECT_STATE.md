@@ -1,4 +1,4 @@
-# MOSCOW — state v0.3.2
+# MOSCOW — state v0.3.7
 
 ## Infrastructure
 
@@ -66,3 +66,11 @@ No D1 migration was added for v0.3.2. Migrations `0001`-`0003` remain unchanged.
 - Cloudflare Worker deployment, D1 migration apply, and remote smoke test are automated through `.github/workflows/cloudflare.yml`.
 - Backend currently remains version `0.2.2` with the v0.3.5 network-reset-resistant smoke test.
 - Existing D1 migrations `0001`-`0003` were not modified. No `0004` migration was added.
+
+## v0.3.7 — Pages asset fix + first phone UI
+
+- Public asset URLs now use Vite `import.meta.env.BASE_URL`, so the approved apartment background works both locally and under GitHub Pages `/MOSCOW/`.
+- The start screen uses the same base-safe approved room image instead of a root-relative CSS URL.
+- Added a minimal frontend-only starter phone screen after `starter_phone` is owned: room shortcut, locked map/wallet/contacts placeholders, current balances and a guide message preview.
+- Interaction zones now get a subtle hover/focus affordance without redrawing room geometry.
+- Backend contract and D1 schema are unchanged. No `0004` migration was added.

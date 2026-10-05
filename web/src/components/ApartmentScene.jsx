@@ -1,3 +1,5 @@
+import { publicAsset } from "../lib/assets.js";
+
 function PixelCharacter({ variant, label }) {
   return (
     <div className={`pixelCharacter ${variant}`} aria-hidden="true">
@@ -38,9 +40,11 @@ export default function ApartmentScene({
     <section className="apartmentScene" aria-label="Комната в московской панельке ночью">
       <div className="sceneLayer sceneBackground" aria-hidden="true">
         <img
-          src="/assets/apartment-room-approved.png"
+          src={publicAsset("assets/apartment-room-approved.png")}
           alt=""
           draggable="false"
+          loading="eager"
+          decoding="sync"
         />
       </div>
 

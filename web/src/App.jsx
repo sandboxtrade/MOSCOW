@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import ApartmentScene from "./components/ApartmentScene.jsx";
 import DialogueBox from "./components/DialogueBox.jsx";
 import PhoneShopModal from "./components/PhoneShopModal.jsx";
+import PhonePanel from "./components/PhonePanel.jsx";
 import QuestPanel from "./components/QuestPanel.jsx";
 import TopHud from "./components/TopHud.jsx";
+import { publicAsset } from "./lib/assets.js";
 import {
   apiRequest,
   createPlayer,
@@ -27,6 +29,7 @@ export default function App() {
   const [dialogueOpen, setDialogueOpen] = useState(false);
   const [dialogueStep, setDialogueStep] = useState(0);
   const [shopOpen, setShopOpen] = useState(false);
+  const [phoneOpen, setPhoneOpen] = useState(false);
   const [toast, setToast] = useState("");
 
   const phoneOwned = Boolean(progress?.phoneOwned);
@@ -167,6 +170,7 @@ export default function App() {
     setIntroDone(false);
     setDialogueOpen(false);
     setShopOpen(false);
+    setPhoneOpen(false);
     setError("");
   }
 
@@ -174,7 +178,10 @@ export default function App() {
     <main className="appShell">
       {!gameStarted ? (
         <section className="startScreen">
-          <div className="startBackdrop" />
+          <div
+            className="startBackdrop"
+            style={{ "--room-background": `url("${publicAsset("assets/apartment-room-approved.png")}")` }}
+          />
           <div className="startNoise" />
 
           <div className="startContent">
@@ -225,9 +232,19 @@ export default function App() {
           <footer className="bottomBar">
             <button className="navButton active"><span>⌂</span>Комната</button>
             <button className="navButton" disabled><span>⌖</span>Карта</button>
-            <button className="navButton" disabled><span>▦</span>Телефон</button>
+            <button
+              className={`navButton ${phoneOwned ? "available" : ""}`}
+              disabled={!phoneOwned}
+              onClick={() => setPhoneOpen(true)}
+            ><span>▦</span>Телефон</button>
             <button className="navButton" onClick={resetLocalSession}><span>↺</span>Сброс</button>
           </footer>
+
+          <PhonePanel
+            open={phoneOpen}
+            wallet={wallet}
+            onClose={() => setPhoneOpen(false)}
+          />
 
           <PhoneShopModal
             open={shopOpen}

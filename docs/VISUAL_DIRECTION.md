@@ -43,3 +43,9 @@ Current overlay layers:
 - door / exit interaction
 
 Character visuals are temporary lightweight scene sprites until dedicated transparent pixel-art assets are produced. Replacing them later must not require changing the background or UI component structure.
+
+## v0.3.7 scene pass
+
+The apartment image must always be referenced through Vite's base-aware public asset URL. GitHub Pages serves the project under `/MOSCOW/`, so root-relative `/assets/...` paths are forbidden for first-party game assets.
+
+The purchased starter phone now has a minimal dark-blue in-game screen. This is deliberately frontend-only; it establishes the phone as a future navigation hub without introducing new backend infrastructure.

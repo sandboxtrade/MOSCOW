@@ -58,7 +58,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
   inset: 0;
   background:
     linear-gradient(180deg, rgba(2, 7, 13, .2), rgba(2, 7, 13, .92)),
-    url('/assets/apartment-room-approved.png') center 39% / cover no-repeat;
+    var(--room-background) center 39% / cover no-repeat;
   transform: scale(1.015);
 }
 
@@ -341,6 +341,20 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
   color: inherit;
 }
 .interactionTarget:disabled { cursor: not-allowed; }
+.interactionTarget::before {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+.interactionTarget:hover:not(:disabled)::before,
+.interactionTarget:focus-visible:not(:disabled)::before {
+  border-color: rgba(91, 201, 255, .18);
+  background: rgba(45, 151, 218, .035);
+  box-shadow: inset 0 0 28px rgba(45, 151, 218, .055);
+}
 .guideTarget { left: 42%; top: 49%; width: 24%; height: 28%; }
 .phoneTarget { left: 34%; top: 58%; width: 28%; height: 17%; }
 .workstationTarget { left: 55%; top: 35%; width: 37%; height: 23%; }
@@ -600,6 +614,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 }
 .navButton span { font-size: 16px; line-height: 1; }
 .navButton.active { color: #d3efff; border-color: #347fac; background: #0a2132; }
+.navButton.available:not(.active) { color: #9edfff; border-color: #245f84; }
 .navButton:disabled { opacity: .32; cursor: not-allowed; }
 .toast {
   position: fixed;
@@ -616,6 +631,98 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
   font-size: 11px;
   text-align: center;
 }
+
+/* PHONE — first useful frontend-only screen after buying starter_phone. */
+.phonePanelBackdrop {
+  position: fixed;
+  z-index: 65;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(0, 4, 8, .76);
+  backdrop-filter: blur(8px);
+}
+.phonePanel {
+  width: min(390px, 100%);
+  min-height: 610px;
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid #2e789f;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 50% 0, rgba(42, 146, 206, .16), transparent 32%),
+    #04101a;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .7), inset 0 0 0 5px #02070b;
+}
+.phonePanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  padding: 4px 6px 10px;
+}
+.phonePanelHeader strong { display: block; margin-top: 3px; font-size: 20px; }
+.phonePanelClose {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #285d7d;
+  border-radius: 50%;
+  background: #081a28;
+  color: #9bdfff;
+  cursor: pointer;
+}
+.phoneBalanceCard {
+  padding: 16px;
+  border: 1px solid #1d5578;
+  background: linear-gradient(145deg, #0b263b, #071722);
+  box-shadow: inset 0 0 26px rgba(80, 191, 255, .06);
+}
+.phoneBalanceCard span, .phoneBalanceCard small { display: block; color: #7895aa; font-size: 10px; }
+.phoneBalanceCard strong { display: block; margin: 7px 0 5px; font-size: 24px; letter-spacing: -.03em; }
+.phoneAppGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+.phoneApp {
+  min-height: 110px;
+  text-align: left;
+  padding: 13px;
+  border: 1px solid #173e59;
+  background: #071621;
+  color: #c5dfed;
+}
+.phoneApp span { display: grid; place-items: center; width: 34px; height: 34px; margin-bottom: 10px; border: 1px solid #317ba5; color: #75d3ff; background: #0b2232; }
+.phoneApp strong, .phoneApp small { display: block; }
+.phoneApp strong { font-size: 11px; }
+.phoneApp small { margin-top: 4px; color: #638098; font-size: 8px; line-height: 1.3; }
+.phoneApp.active { border-color: #3c8fba; background: #0a2030; cursor: pointer; }
+.phoneApp:disabled { opacity: .38; }
+.phoneMessagePreview {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #173b55;
+  background: #06131e;
+}
+.phoneAvatar {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #2f769e;
+  background: #0b2232;
+  color: #77d6ff;
+  font-weight: 900;
+}
+.phoneMessagePreview strong { font-size: 10px; }
+.phoneMessagePreview p { margin: 4px 0 0; color: #7f96a8; font-size: 9px; line-height: 1.4; }
 
 @media (max-width: 560px) {
   .appShell { padding: 0; }
@@ -644,6 +751,8 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
   .shopPhone { width: 78px; height: 150px; border-radius: 14px; }
   .shopInfo h2 { padding-right: 26px; font-size: 19px; }
   .shopInfo > p { font-size: 10px; }
+  .phonePanelBackdrop { padding: 0; align-items: stretch; }
+  .phonePanel { width: 100%; min-height: 100dvh; max-height: 100dvh; border-radius: 0; border-left: 0; border-right: 0; }
 }
 
 @media (max-width: 410px) {
