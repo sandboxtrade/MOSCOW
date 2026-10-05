@@ -32,3 +32,12 @@
 
 - `verify-cloudflare.mjs` — read-only Cloudflare/D1 contract verification.
 - `smoke-remote.mjs` — end-to-end remote API smoke test.
+
+## v0.3.0 frontend
+
+- `web/src/lib/api.js` — API requests
+- `web/src/components/ApartmentScene.jsx` — playable room
+- `web/src/components/TopHud.jsx` — top HUD
+- `web/src/components/QuestPanel.jsx` — quest tracker
+- `web/src/components/DialogueBox.jsx` — guide conversation
+- `web/src/components/PhoneShopModal.jsx` — phone purchase UI

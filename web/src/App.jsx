@@ -1,61 +1,75 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import ApartmentScene from "./components/ApartmentScene.jsx";
+import DialogueBox from "./components/DialogueBox.jsx";
+import PhoneShopModal from "./components/PhoneShopModal.jsx";
+import QuestPanel from "./components/QuestPanel.jsx";
+import TopHud from "./components/TopHud.jsx";
+import {
+  apiRequest,
+  createPlayer,
+  loadPlayer,
+  purchaseStarterPhone,
+} from "./lib/api.js";
 
-const API =
-  import.meta.env.VITE_API_URL ||
-  "https://moscow-city-api.ermilov-stepa228337.workers.dev";
-
-function formatRub(value = 0) {
-  return new Intl.NumberFormat("ru-RU").format(value || 0) + " ₽G";
-}
-
-async function request(path, options = {}) {
-  const response = await fetch(API + path, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || data.message || "REQUEST_FAILED");
-  }
-
-  return data;
-}
+const ACCOUNT_KEY = "moscow.accountId";
+const INTRO_KEY = "moscow.introDone";
 
 export default function App() {
-  const [accountId, setAccountId] = useState(
-    () => localStorage.getItem("moscow.accountId") || "",
-  );
+  const [accountId, setAccountId] = useState(() => localStorage.getItem(ACCOUNT_KEY) || "");
+  const [account, setAccount] = useState(null);
   const [wallet, setWallet] = useState(null);
   const [progress, setProgress] = useState(null);
   const [inventory, setInventory] = useState([]);
+  const [online, setOnline] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [introDone, setIntroDone] = useState(() => localStorage.getItem(INTRO_KEY) === "1");
+  const [dialogueOpen, setDialogueOpen] = useState(false);
+  const [dialogueStep, setDialogueStep] = useState(0);
+  const [shopOpen, setShopOpen] = useState(false);
+  const [toast, setToast] = useState("");
 
   const phoneOwned = Boolean(progress?.phoneOwned);
+  const gameStarted = Boolean(accountId);
 
   useEffect(() => {
-    if (accountId) refresh();
+    apiRequest("/health")
+      .then(() => setOnline(true))
+      .catch(() => setOnline(false));
+  }, []);
+
+  useEffect(() => {
+    if (!accountId) return;
+
+    refreshPlayer();
   }, [accountId]);
 
-  async function refresh() {
-    try {
-      const [walletData, progressData, inventoryData] = await Promise.all([
-        request("/wallet/" + accountId),
-        request("/progress/" + accountId),
-        request("/inventory/" + accountId),
-      ]);
+  useEffect(() => {
+    if (phoneOwned) {
+      setIntroDone(true);
+      localStorage.setItem(INTRO_KEY, "1");
+    }
+  }, [phoneOwned]);
 
-      setWallet(walletData.wallet);
-      setProgress(progressData);
-      setInventory(inventoryData.items || []);
+  const nextHint = useMemo(() => {
+    if (!gameStarted) return "Начни новую жизнь";
+    if (!introDone) return "Поговори с проводником";
+    if (!phoneOwned) return "Купи телефон на столе";
+    return "Выход во двор открыт";
+  }, [gameStarted, introDone, phoneOwned]);
+
+  async function refreshPlayer() {
+    try {
+      const data = await loadPlayer(accountId);
+      setAccount(data.account);
+      setWallet(data.wallet);
+      setProgress(data.progress);
+      setInventory(data.inventory);
       setError("");
+      setOnline(true);
     } catch (err) {
       setError(err.message);
+      setOnline(false);
     }
   }
 
@@ -64,100 +78,160 @@ export default function App() {
     setError("");
 
     try {
-      const data = await request("/account/create", { method: "POST" });
-      localStorage.setItem("moscow.accountId", data.account.id);
+      const data = await createPlayer();
+      localStorage.setItem(ACCOUNT_KEY, data.account.id);
+      localStorage.removeItem(INTRO_KEY);
       setAccountId(data.account.id);
+      setAccount(data.account);
       setWallet(data.wallet);
       setProgress(data.progress);
       setInventory([]);
+      setIntroDone(false);
+      setDialogueStep(0);
+      setDialogueOpen(true);
+      setOnline(true);
     } catch (err) {
       setError(err.message);
     } finally {
       setBusy(false);
+    }
+  }
+
+  function openGuide() {
+    setDialogueStep(phoneOwned ? 99 : 0);
+    setDialogueOpen(true);
+  }
+
+  function nextDialogue() {
+    setDialogueStep((step) => step + 1);
+  }
+
+  function closeDialogue() {
+    setDialogueOpen(false);
+    if (!phoneOwned) {
+      setIntroDone(true);
+      localStorage.setItem(INTRO_KEY, "1");
+      setToast("Новая задача: купить телефон");
+      window.setTimeout(() => setToast(""), 2600);
     }
   }
 
   async function buyPhone() {
+    if (!accountId) return;
+
     setBusy(true);
     setError("");
 
     try {
-      await request("/shop/buy", {
-        method: "POST",
-        headers: {
-          "Idempotency-Key": "starter-phone-" + accountId,
-        },
-        body: JSON.stringify({
-          accountId,
-          itemId: "starter_phone",
-        }),
-      });
-
-      await refresh();
+      await purchaseStarterPhone(accountId);
+      await refreshPlayer();
+      setShopOpen(false);
+      setToast("Телефон добавлен в инвентарь · −15 000 ₽G");
+      window.setTimeout(() => setToast(""), 3200);
+      setDialogueStep(99);
+      setDialogueOpen(true);
     } catch (err) {
-      setError(err.message);
+      if (err.message === "ITEM_ALREADY_OWNED") {
+        await refreshPlayer();
+        setShopOpen(false);
+      } else {
+        setError(err.message);
+      }
     } finally {
       setBusy(false);
     }
   }
 
+  function handleExit() {
+    if (!phoneOwned) return;
+    setToast("Следующая сцена: двор панельки · будет в следующем вертикальном срезе");
+    window.setTimeout(() => setToast(""), 3800);
+  }
+
+  function resetLocalSession() {
+    localStorage.removeItem(ACCOUNT_KEY);
+    localStorage.removeItem(INTRO_KEY);
+    setAccountId("");
+    setAccount(null);
+    setWallet(null);
+    setProgress(null);
+    setInventory([]);
+    setIntroDone(false);
+    setDialogueOpen(false);
+    setShopOpen(false);
+    setError("");
+  }
+
   return (
-    <main className="game">
-      <header>
-        <b>MOSCOW</b>
-        <span>{formatRub(wallet?.rubTotal)}</span>
-      </header>
+    <main className="appShell">
+      {!gameStarted ? (
+        <section className="startScreen">
+          <div className="startBackdrop" />
+          <div className="startNoise" />
 
-      <section className="scene">
-        <div className="city" />
-        <div className="bed" />
-        <div className={"phone " + (phoneOwned ? "owned" : "")}>
-          {phoneOwned ? "MOSCOW" : ""}
-        </div>
+          <div className="startContent">
+            <div className="startKicker">MOSCOW / 00:47</div>
+            <h1>Город никого<br />не ждёт.</h1>
+            <p>
+              Комната в панельке, 200 000 ₽G стартовых денег и один знакомый,
+              который обещал показать, как тут всё устроено.
+            </p>
 
-        <div className="guide">
-          <strong>
-            {!accountId
-              ? "Новая жизнь"
-              : phoneOwned
-                ? "Телефон куплен"
-                : "Первый день"}
-          </strong>
-          <p>
-            {!accountId
-              ? "Создай игрока и начни жизнь в городе."
-              : phoneOwned
-                ? "Телефон у тебя. Теперь город может открываться."
-                : "Купи простой телефон за 15 000 ₽G."}
-          </p>
-        </div>
-      </section>
+            <button className="startButton" onClick={startGame} disabled={busy}>
+              {busy ? "Создаём игрока..." : "Войти в Москву"}
+            </button>
 
-      <section className="hud">
-        {!accountId ? (
-          <button onClick={startGame} disabled={busy}>
-            Начать игру
-          </button>
-        ) : (
-          <>
-            <div className="stats">
-              <span>{formatRub(wallet?.rubNonWithdrawable)}</span>
-              <span>{wallet?.solAvailable || 0} TEST SOL</span>
-              <span>{inventory.length} предметов</span>
+            {error && <div className="startError">{error}</div>}
+          </div>
+        </section>
+      ) : (
+        <>
+          <TopHud wallet={wallet} account={account} online={online} />
+
+          <section className="gameFrame">
+            <ApartmentScene
+              introDone={introDone}
+              phoneOwned={phoneOwned}
+              onGuide={openGuide}
+              onPhone={() => setShopOpen(true)}
+              onExit={handleExit}
+            />
+
+            <QuestPanel introDone={introDone} phoneOwned={phoneOwned} />
+
+            <div className="nextHint">
+              <span>СЕЙЧАС</span>
+              <strong>{nextHint}</strong>
             </div>
 
-            {!phoneOwned ? (
-              <button onClick={buyPhone} disabled={busy}>
-                Купить телефон · 15 000 ₽G
-              </button>
-            ) : (
-              <button disabled>Телефон в инвентаре</button>
-            )}
-          </>
-        )}
+            <DialogueBox
+              visible={dialogueOpen}
+              step={dialogueStep}
+              onNext={nextDialogue}
+              onClose={closeDialogue}
+              phoneOwned={phoneOwned}
+            />
+          </section>
 
-        {error && <pre>{error}</pre>}
-      </section>
+          <footer className="bottomBar">
+            <button className="navButton active"><span>⌂</span>Комната</button>
+            <button className="navButton" disabled><span>⌖</span>Карта</button>
+            <button className="navButton" disabled><span>▦</span>Телефон</button>
+            <button className="navButton" onClick={resetLocalSession}><span>↺</span>Сброс</button>
+          </footer>
+
+          <PhoneShopModal
+            open={shopOpen}
+            wallet={wallet}
+            busy={busy}
+            error={error}
+            onBuy={buyPhone}
+            onClose={() => !busy && setShopOpen(false)}
+          />
+
+          {toast && <div className="toast">{toast}</div>}
+        </>
+      )}
     </main>
   );
 }

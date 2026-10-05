@@ -1,43 +1,42 @@
-# MOSCOW — state v0.2.0
+# MOSCOW — state v0.3.0
 
 ## Infrastructure
 
 - Cloudflare Worker: `moscow-city-api`
 - D1: `moscow-city-db`
-- D1 binding: `DB`
-- Durable Object binding: `ECONOMY`
-- Durable Object class: `EconomyCoordinator`
-- Worker URL: `https://moscow-city-api.ermilov-stepa228337.workers.dev`
+- Durable Object: `EconomyCoordinator`
+- Existing backend contract is unchanged from v0.2.0.
 
-## Backend already covered
+## v0.3.0 — First Playable Scene
 
-- FREE / FUNDED account state
-- 200,000 ₽G starter balance
-- starter balance is NON_WITHDRAWABLE
-- TEST SOL deposit / withdrawal
-- SOL ↔ ₽G test exchange
-- ledger
-- transactions
-- idempotency
-- player progress
-- catalog
-- inventory
-- purchases
-- starter phone purchase
+The technical prototype was replaced by the first actual game scene.
 
-## First playable vertical slice
+Playable flow:
 
-1. Create player
-2. Receive 200,000 ₽G
-3. Meet guide
-4. Buy `starter_phone` for 15,000 ₽G
-5. Balance becomes 185,000 ₽G
-6. Phone enters inventory
-7. `phone_owned = true`
-8. onboarding becomes `PHONE_PURCHASED`
+1. Start game
+2. Player account is created with 200,000 ₽G
+3. Apartment scene opens
+4. Talk to the guide
+5. Phone hotspot unlocks
+6. Open the phone shop
+7. Buy `starter_phone` for 15,000 ₽G through the existing Cloudflare API
+8. Wallet becomes 185,000 ₽G
+9. Inventory/progress refresh from the server
+10. Exit-to-yard hotspot unlocks
 
-## Current development direction
+## Frontend structure
 
-The infrastructure/recovery phase is considered complete. New work should be done as visible vertical slices: frontend + only the backend required for that specific mechanic.
+- `web/src/App.jsx` — game state / orchestration
+- `web/src/lib/api.js` — API client
+- `web/src/components/ApartmentScene.jsx` — apartment scene
+- `web/src/components/TopHud.jsx` — balance/status HUD
+- `web/src/components/QuestPanel.jsx` — current tasks
+- `web/src/components/DialogueBox.jsx` — guide dialogue
+- `web/src/components/PhoneShopModal.jsx` — starter phone purchase
+- `web/src/styles.css` — visual system and responsive scene
 
-Next: replace the technical apartment prototype with the real visual first scene of MOSCOW.
+## Next vertical slice
+
+`yard -> first city map -> first activity/job -> phone becomes navigation hub`
+
+No new D1 migration is required for v0.3.0.

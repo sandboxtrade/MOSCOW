@@ -55,3 +55,7 @@ npm.cmd run test:remote
 ```powershell
 npm.cmd run deploy:api
 ```
+
+## Current playable version
+
+`v0.3.0` contains the first interactive apartment scene: guide dialogue, quest progression, phone purchase and server-backed wallet/inventory update.
