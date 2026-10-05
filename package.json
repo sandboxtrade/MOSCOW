@@ -1,0 +1,19 @@
+{
+  "name": "moscow",
+  "private": true,
+  "version": "0.2.0",
+  "workspaces": [
+    "api",
+    "web"
+  ],
+  "scripts": {
+    "dev:api": "npm --workspace api run dev",
+    "dev:web": "npm --workspace web run dev",
+    "check": "npm --workspace api run check && npm --workspace web run build",
+    "deploy:api": "npm --workspace api run deploy",
+    "db:migrate:local": "npm --workspace api run db:migrate:local",
+    "db:migrate:remote": "npm --workspace api run db:migrate:remote",
+    "verify:cloudflare": "npm run check && node scripts/verify-cloudflare.mjs",
+    "test:remote": "node scripts/smoke-remote.mjs"
+  }
+}

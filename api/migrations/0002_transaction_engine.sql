@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS transactions (id TEXT PRIMARY KEY,account_id TEXT NOT NULL,type TEXT NOT NULL,status TEXT NOT NULL,idempotency_key TEXT,reference_id TEXT,request_payload TEXT,result_payload TEXT,error_code TEXT,created_at TEXT NOT NULL,completed_at TEXT,FOREIGN KEY (account_id) REFERENCES accounts(id));
+CREATE TABLE IF NOT EXISTS idempotency_keys (key TEXT PRIMARY KEY,account_id TEXT NOT NULL,endpoint TEXT NOT NULL,status TEXT NOT NULL,response_status INTEGER,response_body TEXT,transaction_id TEXT,created_at TEXT NOT NULL,completed_at TEXT,FOREIGN KEY (account_id) REFERENCES accounts(id),FOREIGN KEY (transaction_id) REFERENCES transactions(id));
+CREATE INDEX IF NOT EXISTS idx_transactions_account_created ON transactions(account_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_idempotency_account ON idempotency_keys(account_id);

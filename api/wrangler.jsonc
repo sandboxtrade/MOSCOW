@@ -1,0 +1,31 @@
+{
+  "name": "moscow-city-api",
+  "main": "src/worker.js",
+  "workers_dev": true,
+  "preview_urls": false,
+  "compatibility_date": "2026-09-26",
+  "observability": {
+    "enabled": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "moscow-city-db",
+      "database_id": "6e260bf7-b680-45fa-8d6a-c66622c412ad"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "ECONOMY",
+        "class_name": "EconomyCoordinator"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["EconomyCoordinator"]
+    }
+  ]
+}

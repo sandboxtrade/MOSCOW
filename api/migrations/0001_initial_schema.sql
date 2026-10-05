@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS accounts (id TEXT PRIMARY KEY,status TEXT NOT NULL DEFAULT 'FREE',created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS wallets (account_id TEXT PRIMARY KEY,sol_available REAL NOT NULL DEFAULT 0,sol_locked REAL NOT NULL DEFAULT 0,rub_withdrawable INTEGER NOT NULL DEFAULT 0,rub_non_withdrawable INTEGER NOT NULL DEFAULT 0,rub_locked INTEGER NOT NULL DEFAULT 0,FOREIGN KEY (account_id) REFERENCES accounts(id));
+CREATE TABLE IF NOT EXISTS ledger_entries (id TEXT PRIMARY KEY,account_id TEXT NOT NULL,type TEXT NOT NULL,currency TEXT NOT NULL,amount REAL NOT NULL,balance_class TEXT NOT NULL,status TEXT NOT NULL,reference_id TEXT,metadata TEXT,created_at TEXT NOT NULL,FOREIGN KEY (account_id) REFERENCES accounts(id));
+CREATE INDEX IF NOT EXISTS idx_ledger_account_created ON ledger_entries(account_id, created_at);
