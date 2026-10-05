@@ -37,7 +37,7 @@ export class EconomyCoordinator {
       };
 
       if (url.pathname === "/test-sol/deposit") {
-        return runIdempotent(this.env, {
+        return await runIdempotent(this.env, {
           ...common,
           type: "TEST_SOL_DEPOSIT",
           execute: (transaction) =>
@@ -46,7 +46,7 @@ export class EconomyCoordinator {
       }
 
       if (url.pathname === "/test-sol/withdraw") {
-        return runIdempotent(this.env, {
+        return await runIdempotent(this.env, {
           ...common,
           type: "TEST_SOL_WITHDRAWAL",
           execute: (transaction) =>
@@ -55,7 +55,7 @@ export class EconomyCoordinator {
       }
 
       if (url.pathname === "/exchange/sol-to-rub") {
-        return runIdempotent(this.env, {
+        return await runIdempotent(this.env, {
           ...common,
           type: "SOL_TO_RUB",
           execute: (transaction) =>
@@ -64,7 +64,7 @@ export class EconomyCoordinator {
       }
 
       if (url.pathname === "/exchange/rub-to-sol") {
-        return runIdempotent(this.env, {
+        return await runIdempotent(this.env, {
           ...common,
           type: "RUB_TO_SOL",
           execute: (transaction) =>
@@ -73,7 +73,7 @@ export class EconomyCoordinator {
       }
 
       if (url.pathname === "/shop/buy") {
-        return runIdempotent(this.env, {
+        return await runIdempotent(this.env, {
           ...common,
           type: "SHOP_PURCHASE",
           execute: (transaction) =>

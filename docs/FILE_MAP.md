@@ -36,7 +36,7 @@
 ## v0.3.0 frontend
 
 - `web/src/lib/api.js` — API requests
-- `web/src/components/ApartmentScene.jsx` — playable room
+- `web/src/components/ApartmentScene.jsx` — approved room background + independent gameplay overlay layers (player, guide, phone, workstation, exit)
 - `web/src/components/TopHud.jsx` — top HUD
 - `web/src/components/QuestPanel.jsx` — quest tracker
 - `web/src/components/DialogueBox.jsx` — guide conversation

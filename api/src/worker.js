@@ -33,7 +33,7 @@ export default {
         return json({
           ok: true,
           service: "moscow-city-api",
-          version: "0.2.0",
+          version: "0.2.2",
           verticalSlice: true,
           transactionEngine: true,
           idempotency: true,
@@ -79,7 +79,7 @@ export default {
         const headers = new Headers(request.headers);
         headers.set("Content-Type", "application/json");
 
-        return stub.fetch(
+        return await stub.fetch(
           new Request(request.url, {
             method: "POST",
             headers,

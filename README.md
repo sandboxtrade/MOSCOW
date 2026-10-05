@@ -58,4 +58,8 @@ npm.cmd run deploy:api
 
 ## Current playable version
 
-`v0.3.0` contains the first interactive apartment scene: guide dialogue, quest progression, phone purchase and server-backed wallet/inventory update.
+`v0.3.2` contains the approved apartment background integration, layered player/guide/phone/workstation/exit interactions, guide dialogue, quest progression, phone purchase and server-backed wallet/inventory update.
+
+## Automatic deployment
+
+From v0.3.6 the repository includes GitHub Actions for GitHub Pages and Cloudflare Worker deployment. One-time setup is documented in `docs/AUTO_DEPLOY.md`.

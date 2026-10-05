@@ -7,7 +7,7 @@ export default function QuestPanel({ introDone, phoneOwned }) {
         <span className="questIcon">{introDone ? "✓" : "1"}</span>
         <div>
           <strong>Поговорить с проводником</strong>
-          <p>Разберись, с чего начать в городе.</p>
+          <p>Узнай, с чего начать в городе.</p>
         </div>
       </div>
 
@@ -15,7 +15,15 @@ export default function QuestPanel({ introDone, phoneOwned }) {
         <span className="questIcon">{phoneOwned ? "✓" : "2"}</span>
         <div>
           <strong>Купить телефон</strong>
-          <p>Первый инструмент для выхода в город.</p>
+          <p>15 000 ₽G · первый инструмент для города.</p>
+        </div>
+      </div>
+
+      <div className={`quest ${phoneOwned ? "active" : "locked"}`}>
+        <span className="questIcon">3</span>
+        <div>
+          <strong>Выйти во двор</strong>
+          <p>Выход откроется после покупки телефона.</p>
         </div>
       </div>
     </aside>

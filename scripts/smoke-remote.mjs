@@ -18,24 +18,66 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+function networkCause(error) {
+  return (
+    error?.cause?.code ||
+    error?.cause?.message ||
+    error?.code ||
+    error?.message ||
+    String(error)
+  );
+}
+
+function isRetryableNetworkError(error) {
+  const cause = String(networkCause(error)).toUpperCase();
+  return (
+    cause.includes("ECONNRESET") ||
+    cause.includes("UND_ERR_SOCKET") ||
+    cause.includes("EPIPE") ||
+    cause.includes("ETIMEDOUT") ||
+    cause.includes("FETCH FAILED")
+  );
+}
+
 async function api(path, options = {}) {
-  const response = await fetch(API + path, {
+  const request = {
     ...options,
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),
     },
-  });
+  };
+
+  let response;
+  let lastError;
+
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      response = await fetch(API + path, request);
+      lastError = null;
+      break;
+    } catch (error) {
+      lastError = error;
+      if (!isRetryableNetworkError(error) || attempt === 3) break;
+      console.warn(`↻ ${path} network reset; retry ${attempt}/2`);
+      await new Promise((resolve) => setTimeout(resolve, 250 * attempt));
+    }
+  }
+
+  if (!response) {
+    throw new Error(`FETCH ${path} failed after retries: ${networkCause(lastError)}`);
+  }
 
   let data;
   try {
     data = await response.json();
   } catch {
-    data = null;
+    const text = await response.text().catch(() => "");
+    data = text || null;
   }
 
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
+    throw new Error(`HTTP ${response.status} ${path}: ${JSON.stringify(data)}`);
   }
 
   return data;

@@ -1,78 +1,106 @@
+function PixelCharacter({ variant, label }) {
+  return (
+    <div className={`pixelCharacter ${variant}`} aria-hidden="true">
+      <span className="characterShadow" />
+      <span className="characterHead">
+        <span className="characterHair" />
+      </span>
+      <span className="characterTorso" />
+      <span className="characterArm armLeft" />
+      <span className="characterArm armRight" />
+      <span className="characterLeg legLeft" />
+      <span className="characterLeg legRight" />
+      {variant === "guide" && <span className="characterBag" />}
+      <span className="characterLabel">{label}</span>
+    </div>
+  );
+}
+
+function InteractionMarker({ icon, text }) {
+  return (
+    <span className="interactionMarker" aria-hidden="true">
+      <span className="interactionPulse" />
+      <span className="interactionIcon">{icon}</span>
+      <span className="interactionText">{text}</span>
+    </span>
+  );
+}
+
 export default function ApartmentScene({
   introDone,
   phoneOwned,
   onGuide,
   onPhone,
   onExit,
+  onWorkstation,
 }) {
   return (
-    <section className="apartmentScene">
-      <div className="nightWindow">
-        <div className="cityGlow" />
-        <div className="block blockA" />
-        <div className="block blockB" />
-        <div className="block blockC" />
-        <div className="tower" />
+    <section className="apartmentScene" aria-label="Комната в московской панельке ночью">
+      <div className="sceneLayer sceneBackground" aria-hidden="true">
+        <img
+          src="/assets/apartment-room-approved.png"
+          alt=""
+          draggable="false"
+        />
       </div>
 
-      <div className="wallPoster posterOne">МОСКВА<br />ВСЕГДА<br />ДАЛЬШЕ</div>
-      <div className="wallPoster posterTwo">1987</div>
+      <div className="sceneLayer sceneLighting" aria-hidden="true" />
 
-      <div className="radiator" />
-      <div className="bedScene">
-        <div className="pillow" />
-        <div className="blanket" />
+      <div className="sceneLayer playerLayer">
+        <PixelCharacter variant="player" label="Ты" />
       </div>
 
-      <div className="deskScene">
-        <div className="monitor"><span>terminal_</span></div>
-        <div className="keyboard" />
-        <div className="deskLamp" />
-        <div className="mug" />
+      <div className="sceneLayer guideLayer">
+        <PixelCharacter variant="guide" label="Проводник" />
+        <button
+          className="interactionTarget guideTarget"
+          onClick={onGuide}
+          aria-label="Поговорить с проводником"
+        >
+          <InteractionMarker icon="!" text="Поговорить" />
+        </button>
       </div>
 
-      <div className="fridgeScene">
-        <span className="magnet one" />
-        <span className="magnet two" />
-        <span className="magnet three" />
+      <div className={`sceneLayer phoneLayer ${phoneOwned ? "owned" : ""}`}>
+        {!phoneOwned && <span className="phoneObject" aria-hidden="true"><span /></span>}
+        <button
+          className={`interactionTarget phoneTarget ${!introDone || phoneOwned ? "disabled" : "ready"}`}
+          onClick={onPhone}
+          disabled={!introDone || phoneOwned}
+          aria-label={phoneOwned ? "Телефон уже куплен" : "Купить телефон"}
+        >
+          <InteractionMarker
+            icon={phoneOwned ? "✓" : "▣"}
+            text={phoneOwned ? "Телефон у тебя" : introDone ? "Телефон · 15 000 ₽G" : "Сначала поговори"}
+          />
+        </button>
       </div>
 
-      <div className="rug" />
-      <div className="coffeeTable">
-        <div className={`tablePhone ${phoneOwned ? "owned" : ""}`} />
-        <div className="ashtray" />
+      <div className="sceneLayer workstationLayer">
+        <button
+          className="interactionTarget workstationTarget"
+          onClick={onWorkstation}
+          aria-label="Осмотреть рабочее место"
+        >
+          <InteractionMarker icon="⌘" text="Рабочее место" />
+        </button>
       </div>
 
-      <button className="hotspot guideHotspot" onClick={onGuide}>
-        <span className="hotspotIcon">!</span>
-        <span className="hotspotText">Проводник</span>
-      </button>
-
-      <div className="guideSprite" aria-hidden="true">
-        <span className="spriteHead" />
-        <span className="spriteBody" />
-        <span className="spriteBag" />
-        <span className="spriteLeg left" />
-        <span className="spriteLeg right" />
+      <div className={`sceneLayer exitLayer ${phoneOwned ? "unlocked" : "locked"}`}>
+        <button
+          className={`interactionTarget exitTarget ${phoneOwned ? "ready" : "disabled"}`}
+          onClick={onExit}
+          disabled={!phoneOwned}
+          aria-label={phoneOwned ? "Выйти во двор" : "Выход пока закрыт"}
+        >
+          <InteractionMarker icon={phoneOwned ? "↗" : "×"} text={phoneOwned ? "Во двор" : "Выход закрыт"} />
+        </button>
       </div>
 
-      <button
-        className={`hotspot phoneHotspot ${!introDone || phoneOwned ? "disabled" : ""}`}
-        onClick={onPhone}
-        disabled={!introDone || phoneOwned}
-      >
-        <span className="hotspotIcon">▣</span>
-        <span className="hotspotText">{phoneOwned ? "Телефон куплен" : "Купить телефон"}</span>
-      </button>
-
-      <button className={`hotspot exitHotspot ${phoneOwned ? "ready" : "disabled"}`} onClick={onExit} disabled={!phoneOwned}>
-        <span className="hotspotIcon">↗</span>
-        <span className="hotspotText">Во двор</span>
-      </button>
-
-      <div className="sceneCaption">
+      <div className="sceneLocation" aria-hidden="true">
+        <span>СТАРТОВАЯ ТОЧКА</span>
         <strong>Комната в панельке</strong>
-        <span>Москва · 23:47</span>
+        <small>Москва · 23:47</small>
       </div>
     </section>
   );

@@ -148,6 +148,14 @@ export default function App() {
     window.setTimeout(() => setToast(""), 3800);
   }
 
+  function handleWorkstation() {
+    const message = phoneOwned
+      ? "Рабочее место готово для следующей активности. Пока здесь только осмотр."
+      : "Старый компьютер включается, но сначала разберись с проводником и телефоном.";
+    setToast(message);
+    window.setTimeout(() => setToast(""), 3200);
+  }
+
   function resetLocalSession() {
     localStorage.removeItem(ACCOUNT_KEY);
     localStorage.removeItem(INTRO_KEY);
@@ -195,6 +203,7 @@ export default function App() {
               onGuide={openGuide}
               onPhone={() => setShopOpen(true)}
               onExit={handleExit}
+              onWorkstation={handleWorkstation}
             />
 
             <QuestPanel introDone={introDone} phoneOwned={phoneOwned} />

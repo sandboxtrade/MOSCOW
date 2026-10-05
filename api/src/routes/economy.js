@@ -371,7 +371,7 @@ export async function exchangeSolToRub(env, transaction, rawAmount) {
 
 export async function exchangeRubToSol(env, transaction, rawAmount) {
   const rubAmount = Math.floor(Number(rawAmount));
-  if (!Number.isFinite(rubAmount) || rubAmount <= 0) {
+  if (!Number.isSafeInteger(rubAmount) || rubAmount <= 0) {
     return failTransaction(env, transaction, 400, "INVALID_AMOUNT");
   }
 
@@ -385,18 +385,21 @@ export async function exchangeRubToSol(env, transaction, rawAmount) {
     return failTransaction(env, transaction, 409, "INSUFFICIENT_WITHDRAWABLE_RUB");
   }
 
-  const solAmount = Math.floor((rubAmount / TEST_SOL_TO_RUBG) * 1e9) / 1e9;
-  if (solAmount <= 0) {
+  // Calculate in nano-SOL first. This keeps the reverse conversion deterministic
+  // and avoids floating-point drift around exact round trips (e.g. 22,500 ₽G -> 0.1 SOL).
+  const nanoSol = Math.floor((rubAmount * 1e9) / TEST_SOL_TO_RUBG);
+  if (!Number.isSafeInteger(nanoSol) || nanoSol <= 0) {
     return failTransaction(env, transaction, 400, "EXCHANGE_AMOUNT_TOO_SMALL");
   }
 
+  const solAmount = nanoSol / 1e9;
   const rubLedgerId = crypto.randomUUID();
   const solLedgerId = crypto.randomUUID();
   const now = new Date().toISOString();
   const walletAfter = {
     ...wallet,
     rub_withdrawable: Number(wallet.rub_withdrawable) - rubAmount,
-    sol_available: Number(wallet.sol_available) + solAmount,
+    sol_available: Math.round((Number(wallet.sol_available) + solAmount) * 1e9) / 1e9,
   };
 
   const response = {
@@ -418,9 +421,13 @@ export async function exchangeRubToSol(env, transaction, rawAmount) {
   return completeTransaction(env, transaction, response, [
     env.DB.prepare(`
       UPDATE wallets
-      SET rub_withdrawable = rub_withdrawable - ?, sol_available = sol_available + ?
+      SET rub_withdrawable = ?, sol_available = ?
       WHERE account_id = ?
-    `).bind(rubAmount, solAmount, transaction.accountId),
+    `).bind(
+      walletAfter.rub_withdrawable,
+      walletAfter.sol_available,
+      transaction.accountId,
+    ),
     env.DB.prepare(`
       INSERT INTO ledger_entries (
         id, account_id, type, currency, amount, balance_class,
@@ -432,7 +439,12 @@ export async function exchangeRubToSol(env, transaction, rawAmount) {
       transaction.accountId,
       -rubAmount,
       transaction.referenceId,
-      JSON.stringify({ testMode: true, side: "DEBIT", rate: TEST_SOL_TO_RUBG }),
+      JSON.stringify({
+        testMode: true,
+        side: "DEBIT",
+        rate: TEST_SOL_TO_RUBG,
+        nanoSol,
+      }),
       now,
     ),
     env.DB.prepare(`
@@ -446,7 +458,12 @@ export async function exchangeRubToSol(env, transaction, rawAmount) {
       transaction.accountId,
       solAmount,
       transaction.referenceId,
-      JSON.stringify({ testMode: true, side: "CREDIT", rate: TEST_SOL_TO_RUBG }),
+      JSON.stringify({
+        testMode: true,
+        side: "CREDIT",
+        rate: TEST_SOL_TO_RUBG,
+        nanoSol,
+      }),
       now,
     ),
   ]);

@@ -29,3 +29,17 @@ This image was approved after removing all HUD, dialogue windows, characters and
 8. Quest panel visual pass.
 
 Do not generate large texture packs yet. Build the first room as a finished vertical slice first.
+
+## v0.3.2 implementation status
+
+The approved apartment background is integrated directly into `ApartmentScene` at its native 2:3 portrait ratio. Interior furniture/window/room geometry must not be recreated in CSS. CSS/React overlays are reserved for gameplay layers and interface only.
+
+Current overlay layers:
+
+- player
+- guide
+- phone interaction
+- workstation interaction
+- door / exit interaction
+
+Character visuals are temporary lightweight scene sprites until dedicated transparent pixel-art assets are produced. Replacing them later must not require changing the background or UI component structure.

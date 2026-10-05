@@ -1,4 +1,4 @@
-# MOSCOW — state v0.3.0
+# MOSCOW — state v0.3.2
 
 ## Infrastructure
 
@@ -46,3 +46,23 @@ No new D1 migration is required for v0.3.0.
 - Approved first-apartment background added at `web/public/assets/apartment-room-approved.png`.
 - The approved background contains no HUD, characters, dialogue or interaction markers.
 - Next milestone: integrate this background into `ApartmentScene` and rebuild the first room as layered game UI + sprites over the background.
+
+## v0.3.2 — Approved apartment scene integration
+
+- `web/public/assets/apartment-room-approved.png` is now the single visual background for the first room.
+- Removed the duplicate CSS-built apartment interior that conflicted with the approved art.
+- `ApartmentScene` now uses independent overlay layers for the player, guide, phone, workstation and exit.
+- Existing guide -> phone purchase -> exit unlock flow is preserved.
+- Workstation is an inspectable frontend-only interaction; no backend contract or D1 schema changes were required.
+- HUD, quests, dialogue, shop modal and bottom navigation remain separate React UI components/layers.
+- UI palette was consolidated around dark navy surfaces with blue/cyan interaction accents.
+- Mobile-first portrait layout now follows the approved background's native 2:3 aspect ratio.
+
+No D1 migration was added for v0.3.2. Migrations `0001`-`0003` remain unchanged.
+
+## v0.3.6 automation
+
+- GitHub Pages deployment is automated through `.github/workflows/pages.yml`.
+- Cloudflare Worker deployment, D1 migration apply, and remote smoke test are automated through `.github/workflows/cloudflare.yml`.
+- Backend currently remains version `0.2.2` with the v0.3.5 network-reset-resistant smoke test.
+- Existing D1 migrations `0001`-`0003` were not modified. No `0004` migration was added.
