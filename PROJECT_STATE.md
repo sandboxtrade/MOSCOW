@@ -40,3 +40,9 @@ Playable flow:
 `yard -> first city map -> first activity/job -> phone becomes navigation hub`
 
 No new D1 migration is required for v0.3.0.
+
+## Visual update — v0.3.1 handoff
+
+- Approved first-apartment background added at `web/public/assets/apartment-room-approved.png`.
+- The approved background contains no HUD, characters, dialogue or interaction markers.
+- Next milestone: integrate this background into `ApartmentScene` and rebuild the first room as layered game UI + sprites over the background.
