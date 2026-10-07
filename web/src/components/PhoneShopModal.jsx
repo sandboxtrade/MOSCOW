@@ -1,7 +1,21 @@
-import { publicAsset } from "../lib/assets.js";
-
 function formatRub(value = 0) {
   return new Intl.NumberFormat("ru-RU").format(Number(value || 0)) + " ₽G";
+}
+
+function CssPhoneModel() {
+  return (
+    <div className="cssPhoneModel" aria-hidden="true">
+      <span className="cssPhoneSpeaker" />
+      <span className="cssPhoneCamera" />
+      <div className="cssPhoneScreen">
+        <span className="cssPhoneOrb orbA" />
+        <span className="cssPhoneOrb orbB" />
+        <strong>M</strong>
+      </div>
+      <span className="cssPhoneSideButton sideA" />
+      <span className="cssPhoneSideButton sideB" />
+    </div>
+  );
 }
 
 export default function PhoneShopModal({ open, wallet, busy, error, onBuy, onClose }) {
@@ -18,11 +32,7 @@ export default function PhoneShopModal({ open, wallet, busy, error, onBuy, onClo
 
         <div className="shopPhoneArt" aria-hidden="true">
           <span className="shopPhoneGlow" />
-          <img
-            src={publicAsset("assets/phone/phone-frame.png")}
-            alt=""
-            draggable="false"
-          />
+          <CssPhoneModel />
         </div>
 
         <div className="shopInfo">

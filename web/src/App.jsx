@@ -5,7 +5,6 @@ import PhoneShopModal from "./components/PhoneShopModal.jsx";
 import PhonePanel from "./components/PhonePanel.jsx";
 import QuestPanel from "./components/QuestPanel.jsx";
 import TopHud from "./components/TopHud.jsx";
-import { publicAsset } from "./lib/assets.js";
 import {
   apiRequest,
   createPlayer,
@@ -177,10 +176,12 @@ export default function App() {
     <main className="appShell">
       {!gameStarted ? (
         <section className="startScreen">
-          <div
-            className="startBackdrop"
-            style={{ "--room-background": `url("${publicAsset("assets/apartment-room-approved.png")}")` }}
-          />
+          <div className="startBackdrop" aria-hidden="true">
+            <span className="startCity cityOne" />
+            <span className="startCity cityTwo" />
+            <span className="startCity cityThree" />
+            <span className="startRoadGlow" />
+          </div>
           <div className="startAurora" aria-hidden="true" />
           <div className="startNoise" aria-hidden="true" />
           <div className="startScanline" aria-hidden="true" />
@@ -188,6 +189,7 @@ export default function App() {
           <div className="startChrome">
             <div className="startTopline">
               <span className="startTag">MOSCOW</span>
+              <span className="startTag buildTag">v0.3.14 · LIVE</span>
               <span className="startTag muted">пролог · панельки</span>
               <span className="startTag muted">ночь</span>
             </div>
@@ -219,7 +221,7 @@ export default function App() {
                   {busy ? "Создаём игрока..." : "Начать"}
                 </button>
 
-                {error && <div className="startError">{error}</div>}
+                {error && <div className="startError">{error === "API_TIMEOUT" ? "Сервер не ответил за 12 секунд. Обнови страницу и повтори." : error}</div>}
               </div>
 
               <aside className="startSideCard">
@@ -243,6 +245,7 @@ export default function App() {
           <TopHud wallet={wallet} account={account} online={online} />
 
           <section className="gameFrame">
+            <span className="buildStamp">v0.3.14 · LIVE ROOM</span>
             <ApartmentScene
               introDone={introDone}
               phoneOwned={phoneOwned}

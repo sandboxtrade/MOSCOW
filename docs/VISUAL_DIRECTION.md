@@ -1,60 +1,55 @@
 # MOSCOW — visual direction
 
-## Approved apartment background
+## v0.3.12: live faux-3D room
 
-The current approved base background for the first apartment scene is:
+The first apartment has changed visual direction. The previous runtime composition based on a raster room background plus transparent PNG characters is no longer the target architecture.
 
-`web/public/assets/apartment-room-approved.png`
+The current room is now built as a **live 2.5D / faux-3D vector scene** inside React/SVG/CSS:
 
-This image was approved after removing all HUD, dialogue windows, characters and interaction markers from the earlier reference screen.
+- no raster room background is required at runtime;
+- no character PNG is required at runtime;
+- no phone PNG is required at runtime;
+- room geometry is drawn from live vector planes/blocks;
+- furniture, walls, window, light, characters and small props are independent scene elements;
+- ambient motion is produced by CSS/SVG animation rather than video or baked frames;
+- interaction targets and UI stay independent from world rendering.
 
-## Current visual direction
+This is intentionally **not real-time full 3D**. The goal is a mobile-friendly scene that feels dimensional, alive and expandable without introducing a heavy 3D engine yet.
 
-- Mobile-first vertical game presentation.
-- Detailed pixel-art / pixel-styled 2D scene.
-- Moscow panel-apartment atmosphere at night.
-- Gritty, lived-in, low-income interior; not cozy fantasy and not isometric dollhouse art.
-- UI should be layered over the scene, not baked into the background.
-- Character, guide, phone hotspot, exit hotspot, HUD, quests and dialogue should remain separate assets/components.
+## Scene design language
 
-## Next asset priorities
+- Modern Moscow night atmosphere.
+- Dark, restrained palette with cold city light and small warm interior light sources.
+- Geometric stylization rather than photorealism.
+- Strong depth hierarchy and readable silhouettes.
+- World motion must stay subtle: monitor scan, city lights, dust, light breathing, character idle motion and tiny pointer parallax.
+- Interaction markers should feel like MOSCOW UI, not like the interface of any other project.
 
-1. Player character sprites: front/back/left/right + walking frames.
-2. Guide sprite: full-body neutral pose first, more poses later.
-3. Phone interactive object: transparent PNG, normal + highlighted states.
-4. Exit/door interaction marker.
-5. Workstation/computer interaction marker.
-6. HUD icon set.
-7. Dialogue portrait + frame.
-8. Quest panel visual pass.
+## Interface rule
 
-Do not generate large texture packs yet. Build the first room as a finished vertical slice first.
+The UI keeps its own MOSCOW identity. The other user's game is only a reference for the idea of a living expandable world, **not** a UI reference. Do not copy its card shapes, navigation structure, typography or layout.
 
-## v0.3.2 implementation status
+## Current room structure
 
-The approved apartment background is integrated directly into `ApartmentScene` at its native 2:3 portrait ratio. Interior furniture/window/room geometry must not be recreated in CSS. CSS/React overlays are reserved for gameplay layers and interface only.
+`ApartmentScene.jsx` contains a live vector world:
 
-Current overlay layers:
+1. cutaway room shell (floor + two walls)
+2. window + animated city skyline
+3. bed / nightstand / radiator
+4. rug / coffee table
+5. desk / monitor / lamp
+6. fridge / door
+7. vector player and guide
+8. phone prop
+9. ambient lighting / dust / scan overlay
+10. separate HTML interaction hitboxes
 
-- player
-- guide
-- phone interaction
-- workstation interaction
-- door / exit interaction
+## Next visual priorities
 
-Character visuals are temporary lightweight scene sprites until dedicated transparent pixel-art assets are produced. Replacing them later must not require changing the background or UI component structure.
+1. Improve proportions and composition after seeing the live build on phone.
+2. Refine vector characters (faces/clothing silhouettes) without returning to large PNG overlays.
+3. Add depth-aware occlusion for characters behind selected furniture.
+4. Add small room interaction states (monitor active, lamp toggle, phone pickup).
+5. Only after the first room reads well, reuse the same scene system for later interiors.
 
-## v0.3.7 scene pass
-
-The apartment image must always be referenced through Vite's base-aware public asset URL. GitHub Pages serves the project under `/MOSCOW/`, so root-relative `/assets/...` paths are forbidden for first-party game assets.
-
-The purchased starter phone now has a minimal dark-blue in-game screen. This is deliberately frontend-only; it establishes the phone as a future navigation hub without introducing new backend infrastructure.
-
-## v0.3.8 interface direction
-
-The room art must stay visually dominant. HUD and quests should not cover large portions of the background. Current-room UI uses a compact top status strip, one objective chip, expandable tasks, a restrained bottom navigation and a cinematic dialogue sheet. City/yard navigation is deliberately not exposed in this pass.
-
-
-## v0.3.10 character asset pass
-
-The temporary CSS character drawings have been retired from the live room composition. Current generated player/guide PNGs are now the working visual baseline. Keep character art as transparent overlays; do not bake them into the apartment background. Walk frames are stored for later movement work, but the current room slice remains mostly stationary.
+The old `apartment-room-approved.png` remains useful only as historical art direction reference; it is no longer required by the live room renderer.

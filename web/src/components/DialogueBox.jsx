@@ -1,5 +1,3 @@
-import { publicAsset } from "../lib/assets.js";
-
 const lines = [
   {
     title: "Проводник",
@@ -14,6 +12,19 @@ const lines = [
     text: "На столе есть простой вариант за 15 000 ₽G. Стартовые деньги тратить можно, вывести их нельзя.",
   },
 ];
+
+function GuideAvatar() {
+  return (
+    <div className="guideAvatarVector" aria-hidden="true">
+      <span className="avatarGlow" />
+      <span className="avatarHood" />
+      <span className="avatarNeck" />
+      <span className="avatarFace"><i /></span>
+      <span className="avatarHair" />
+      <span className="avatarStrap" />
+    </div>
+  );
+}
 
 export default function DialogueBox({ visible, step, onNext, onClose, phoneOwned }) {
   if (!visible) return null;
@@ -31,11 +42,7 @@ export default function DialogueBox({ visible, step, onNext, onClose, phoneOwned
   return (
     <section className="dialogueBox" role="dialog" aria-label="Диалог с проводником">
       <div className="guidePortrait" aria-hidden="true">
-        <img
-          src={publicAsset("assets/characters/guide-portrait.png")}
-          alt=""
-          draggable="false"
-        />
+        <GuideAvatar />
       </div>
 
       <div className="dialogueCopy">
