@@ -58,7 +58,7 @@ npm.cmd run deploy:api
 
 ## Current playable version
 
-`v0.3.10` keeps the experience inside the first approved room and adds the generated player, guide, dialogue portrait and phone assets directly into the live scene. Walk-cycle frames are already stored for later movement work. Backend and database behavior are unchanged.
+`v0.3.11` keeps the experience inside the first approved room and adds the generated player, guide, dialogue portrait and phone assets directly into the live scene. Walk-cycle frames are already stored for later movement work. Backend and database behavior are unchanged.
 
 ## Automatic deployment
 

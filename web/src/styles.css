@@ -1948,7 +1948,6 @@ button:focus-visible {
 /* v0.3.10 — generated character / phone assets */
 .characterAnchor {
   position: absolute;
-  width: 0;
   height: 0;
   z-index: 2;
   pointer-events: none;
@@ -1958,9 +1957,9 @@ button:focus-visible {
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: auto;
+  width: 100%;
   max-width: none;
-  height: var(--character-height);
+  height: auto;
   transform: translateX(-50%);
   transform-origin: 50% 100%;
   object-fit: contain;
@@ -1970,24 +1969,22 @@ button:focus-visible {
   animation: characterIdle 5.2s ease-in-out infinite;
 }
 
+/* Width is relative to the room itself, so PNGs keep a real size on mobile. */
 .playerCharacterAnchor {
   left: 29.5%;
   bottom: 18.4%;
-  --character-height: 31.5vh;
+  width: 9.4%;
 }
 
 .guideCharacterAnchor {
   left: 67%;
   bottom: 28.8%;
-  --character-height: 32.5vh;
+  width: 9.8%;
 }
 
-.apartmentScene .playerCharacterAnchor {
-  --character-height: 31%;
-}
-
-.apartmentScene .guideCharacterAnchor {
-  --character-height: 32%;
+/* talk artwork is wider than idle artwork; this keeps the perceived character height stable */
+.guideCharacterAnchor.talking {
+  width: 13.9%;
 }
 
 .guideCharacterAnchor .sceneCharacter {
@@ -2013,7 +2010,7 @@ button:focus-visible {
 .characterAnchor .characterLabel {
   left: 50%;
   bottom: auto;
-  top: 10px;
+  top: 8px;
   transform: translateX(-50%);
 }
 
