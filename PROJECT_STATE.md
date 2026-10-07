@@ -1,4 +1,4 @@
-# MOSCOW — state v0.3.11
+# MOSCOW — state v0.3.10
 
 ## Infrastructure
 
@@ -65,12 +65,3 @@ Playable flow:
 - Added generated player walk-cycle frames (`player-walk-1.png`, `player-walk-2.png`) to the project now so movement can use the same character design later without another asset migration.
 - Repositioned the new full-size character art to sit naturally on the apartment floor and kept labels / interaction hit areas separate from the art.
 - Backend, Cloudflare bindings and D1 schema are unchanged. Migrations `0001`-`0003` remain untouched and no `0004` migration was added.
-
-
-## v0.3.11 — character visibility hotfix
-
-- Fixed generated player/guide PNGs rendering at zero size on the apartment scene.
-- Character scale now derives from apartment width instead of a zero-height anchor.
-- Guide idle/talk artwork keeps approximately the same perceived height.
-- Generated assets themselves are unchanged.
-- Backend and D1 are unchanged; migrations `0001`-`0003` remain untouched and no `0004` was added.
