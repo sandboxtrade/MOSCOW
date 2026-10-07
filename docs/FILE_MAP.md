@@ -41,3 +41,15 @@
 - `web/src/components/QuestPanel.jsx` — quest tracker
 - `web/src/components/DialogueBox.jsx` — guide conversation
 - `web/src/components/PhoneShopModal.jsx` — phone purchase UI
+
+
+## v0.3.10 visual assets
+
+- `web/public/assets/characters/player-idle.png` — current player idle art
+- `web/public/assets/characters/player-walk-1.png` — reserved walk frame 1
+- `web/public/assets/characters/player-walk-2.png` — reserved walk frame 2
+- `web/public/assets/characters/guide-idle.png` — guide idle art
+- `web/public/assets/characters/guide-talk.png` — guide dialogue gesture art
+- `web/public/assets/characters/guide-portrait.png` — guide dialogue portrait
+- `web/public/assets/phone/phone-world.png` — phone object in the room
+- `web/public/assets/phone/phone-frame.png` — phone product/UI frame art

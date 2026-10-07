@@ -53,3 +53,8 @@ The purchased starter phone now has a minimal dark-blue in-game screen. This is 
 ## v0.3.8 interface direction
 
 The room art must stay visually dominant. HUD and quests should not cover large portions of the background. Current-room UI uses a compact top status strip, one objective chip, expandable tasks, a restrained bottom navigation and a cinematic dialogue sheet. City/yard navigation is deliberately not exposed in this pass.
+
+
+## v0.3.10 character asset pass
+
+The temporary CSS character drawings have been retired from the live room composition. Current generated player/guide PNGs are now the working visual baseline. Keep character art as transparent overlays; do not bake them into the apartment background. Walk frames are stored for later movement work, but the current room slice remains mostly stationary.

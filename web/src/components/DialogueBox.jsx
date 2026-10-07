@@ -1,3 +1,5 @@
+import { publicAsset } from "../lib/assets.js";
+
 const lines = [
   {
     title: "Проводник",
@@ -29,9 +31,11 @@ export default function DialogueBox({ visible, step, onNext, onClose, phoneOwned
   return (
     <section className="dialogueBox" role="dialog" aria-label="Диалог с проводником">
       <div className="guidePortrait" aria-hidden="true">
-        <span className="hair" />
-        <span className="face" />
-        <span className="hood" />
+        <img
+          src={publicAsset("assets/characters/guide-portrait.png")}
+          alt=""
+          draggable="false"
+        />
       </div>
 
       <div className="dialogueCopy">

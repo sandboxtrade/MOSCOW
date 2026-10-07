@@ -1,4 +1,4 @@
-# MOSCOW — state v0.3.9
+# MOSCOW — state v0.3.10
 
 ## Infrastructure
 
@@ -53,3 +53,15 @@ Playable flow:
 ## Next visual step
 
 `replace temporary character + phone placeholders with user-provided art -> keep polishing first room -> only then move forward to new spaces`
+
+
+## v0.3.10 — generated character and phone assets integrated
+
+- Replaced the temporary CSS-built player and guide figures in the room with generated transparent PNG character assets.
+- The guide now switches from idle art to a separate talking/gesture art while dialogue is open.
+- Added a dedicated generated guide portrait to the dialogue box.
+- Replaced the CSS phone prop in the room with a generated transparent phone asset.
+- Replaced the CSS phone mockup in the shop modal with the generated front-facing phone frame asset.
+- Added generated player walk-cycle frames (`player-walk-1.png`, `player-walk-2.png`) to the project now so movement can use the same character design later without another asset migration.
+- Repositioned the new full-size character art to sit naturally on the apartment floor and kept labels / interaction hit areas separate from the art.
+- Backend, Cloudflare bindings and D1 schema are unchanged. Migrations `0001`-`0003` remain untouched and no `0004` migration was added.

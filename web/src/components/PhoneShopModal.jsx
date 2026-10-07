@@ -1,3 +1,5 @@
+import { publicAsset } from "../lib/assets.js";
+
 function formatRub(value = 0) {
   return new Intl.NumberFormat("ru-RU").format(Number(value || 0)) + " ₽G";
 }
@@ -12,12 +14,15 @@ export default function PhoneShopModal({ open, wallet, busy, error, onBuy, onClo
   return (
     <div className="modalBackdrop" onMouseDown={onClose}>
       <section className="shopModal" onMouseDown={(event) => event.stopPropagation()}>
-        <button className="modalClose" onClick={onClose}>×</button>
+        <button className="modalClose" onClick={onClose} aria-label="Закрыть магазин">×</button>
 
-        <div className="shopPhone" aria-hidden="true">
-          <div className="speaker" />
-          <div className="screenGlow">M</div>
-          <div className="homeBar" />
+        <div className="shopPhoneArt" aria-hidden="true">
+          <span className="shopPhoneGlow" />
+          <img
+            src={publicAsset("assets/phone/phone-frame.png")}
+            alt=""
+            draggable="false"
+          />
         </div>
 
         <div className="shopInfo">

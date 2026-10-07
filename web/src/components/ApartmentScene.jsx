@@ -1,21 +1,5 @@
 import { publicAsset } from "../lib/assets.js";
 
-function PixelCharacter({ variant, label }) {
-  return (
-    <div className={`pixelCharacter ${variant}`} aria-hidden="true">
-      <span className="characterShadow" />
-      <span className="characterHead"><span className="characterHair" /></span>
-      <span className="characterTorso" />
-      <span className="characterArm armLeft" />
-      <span className="characterArm armRight" />
-      <span className="characterLeg legLeft" />
-      <span className="characterLeg legRight" />
-      {variant === "guide" && <span className="characterBag" />}
-      <span className="characterLabel">{label}</span>
-    </div>
-  );
-}
-
 function InteractionMarker({ icon, text }) {
   return (
     <span className="interactionMarker" aria-hidden="true">
@@ -26,7 +10,19 @@ function InteractionMarker({ icon, text }) {
   );
 }
 
-export default function ApartmentScene({ introDone, phoneOwned, onGuide, onPhone, onWorkstation }) {
+export default function ApartmentScene({
+  introDone,
+  phoneOwned,
+  guideTalking,
+  onGuide,
+  onPhone,
+  onWorkstation,
+}) {
+  const playerIdle = publicAsset("assets/characters/player-idle.png");
+  const guideIdle = publicAsset("assets/characters/guide-idle.png");
+  const guideTalk = publicAsset("assets/characters/guide-talk.png");
+  const phoneWorld = publicAsset("assets/phone/phone-world.png");
+
   return (
     <section className="apartmentScene" aria-label="Комната в московской панельке ночью">
       <div className="sceneLayer sceneBackground" aria-hidden="true">
@@ -53,19 +49,42 @@ export default function ApartmentScene({ introDone, phoneOwned, onGuide, onPhone
       <div className="sceneLayer sceneLighting" aria-hidden="true" />
       <div className="sceneLayer sceneGrain" aria-hidden="true" />
 
-      <div className="sceneLayer playerLayer">
-        <PixelCharacter variant="player" label="Ты" />
+      <div className="sceneLayer playerLayer" aria-hidden="true">
+        <div className="characterAnchor playerCharacterAnchor">
+          <img className="sceneCharacter playerCharacter" src={playerIdle} alt="" draggable="false" />
+          <span className="characterGroundShadow" />
+          <span className="characterLabel">Ты</span>
+        </div>
       </div>
 
       <div className="sceneLayer guideLayer">
-        <PixelCharacter variant="guide" label="Проводник" />
+        <div className={`characterAnchor guideCharacterAnchor ${guideTalking ? "talking" : ""}`} aria-hidden="true">
+          <img
+            className="sceneCharacter guideCharacter"
+            src={guideTalking ? guideTalk : guideIdle}
+            alt=""
+            draggable="false"
+          />
+          <span className="characterGroundShadow" />
+          <span className="characterLabel">Проводник</span>
+        </div>
+
         <button className="interactionTarget guideTarget" onClick={onGuide} aria-label="Поговорить с проводником">
           <InteractionMarker icon="!" text="Поговорить" />
         </button>
       </div>
 
       <div className={`sceneLayer phoneLayer ${phoneOwned ? "owned" : ""}`}>
-        {!phoneOwned && <span className="phoneObject" aria-hidden="true"><span /></span>}
+        {!phoneOwned && (
+          <img
+            className="phoneWorldObject"
+            src={phoneWorld}
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+          />
+        )}
+
         <button
           className={`interactionTarget phoneTarget ${!introDone || phoneOwned ? "disabled" : "ready"}`}
           onClick={onPhone}

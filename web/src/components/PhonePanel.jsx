@@ -1,3 +1,5 @@
+import { publicAsset } from "../lib/assets.js";
+
 export default function PhonePanel({ open, wallet, onClose, onReset }) {
   if (!open) return null;
 
@@ -55,7 +57,9 @@ export default function PhonePanel({ open, wallet, onClose, onReset }) {
 
         <div className="phoneSectionTitle">Сообщения</div>
         <div className="phoneMessagePreview">
-          <span className="phoneAvatar">П</span>
+          <span className="phoneAvatar" aria-hidden="true">
+            <img src={publicAsset("assets/characters/guide-portrait.png")} alt="" draggable="false" />
+          </span>
           <div>
             <strong>Проводник</strong>
             <p>Осмотрись в комнате. Не спеши дальше.</p>

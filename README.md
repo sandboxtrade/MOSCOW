@@ -58,7 +58,7 @@ npm.cmd run deploy:api
 
 ## Current playable version
 
-`v0.3.9` keeps the experience inside the first approved room and focuses on interface polish. The current slice includes the approved room background integration, layered player/guide/phone/workstation interactions, guide dialogue, task progression, phone purchase, server-backed wallet/inventory update, phone screen, a refined start screen, and light ambient motion/glow to make the room feel alive without turning it into a fully animated scene.
+`v0.3.10` keeps the experience inside the first approved room and adds the generated player, guide, dialogue portrait and phone assets directly into the live scene. Walk-cycle frames are already stored for later movement work. Backend and database behavior are unchanged.
 
 ## Automatic deployment
 

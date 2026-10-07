@@ -246,6 +246,7 @@ export default function App() {
             <ApartmentScene
               introDone={introDone}
               phoneOwned={phoneOwned}
+              guideTalking={dialogueOpen}
               onGuide={openGuide}
               onPhone={() => setShopOpen(true)}
               onWorkstation={handleWorkstation}
