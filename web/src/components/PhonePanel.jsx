@@ -1,4 +1,4 @@
-export default function PhonePanel({ open, wallet, onClose }) {
+export default function PhonePanel({ open, wallet, onClose, onReset }) {
   if (!open) return null;
 
   return (
@@ -10,30 +10,31 @@ export default function PhonePanel({ open, wallet, onClose }) {
         aria-label="Телефон"
         onMouseDown={(event) => event.stopPropagation()}
       >
+        <div className="phoneStatusBar" aria-hidden="true">
+          <span>23:48</span>
+          <span>● ● ●</span>
+        </div>
+
         <header className="phonePanelHeader">
           <div>
-            <span className="panelEyebrow">STARTER PHONE</span>
-            <strong>23:48</strong>
+            <span className="panelEyebrow">МОЙ ТЕЛЕФОН</span>
+            <strong>Главная</strong>
           </div>
           <button className="phonePanelClose" onClick={onClose} aria-label="Закрыть телефон">×</button>
         </header>
 
         <div className="phoneBalanceCard">
-          <span>Баланс</span>
+          <span>Доступно</span>
           <strong>{Math.round(wallet?.rubTotal || 0).toLocaleString("ru-RU")} ₽G</strong>
           <small>{Number(wallet?.solAvailable || 0).toFixed(4)} SOL</small>
         </div>
 
+        <div className="phoneSectionTitle">Приложения</div>
         <div className="phoneAppGrid">
           <button className="phoneApp active" onClick={onClose}>
             <span>⌂</span>
             <strong>Комната</strong>
-            <small>Текущая точка</small>
-          </button>
-          <button className="phoneApp" disabled>
-            <span>⌖</span>
-            <strong>Карта</strong>
-            <small>После выхода во двор</small>
+            <small>Вернуться в игру</small>
           </button>
           <button className="phoneApp" disabled>
             <span>₽</span>
@@ -43,17 +44,26 @@ export default function PhonePanel({ open, wallet, onClose }) {
           <button className="phoneApp" disabled>
             <span>●</span>
             <strong>Контакты</strong>
-            <small>Проводник</small>
+            <small>1 контакт</small>
+          </button>
+          <button className="phoneApp" disabled>
+            <span>⌁</span>
+            <strong>Сервисы</strong>
+            <small>Недоступно</small>
           </button>
         </div>
 
+        <div className="phoneSectionTitle">Сообщения</div>
         <div className="phoneMessagePreview">
           <span className="phoneAvatar">П</span>
           <div>
             <strong>Проводник</strong>
-            <p>Спускайся во двор. Дальше покажу район.</p>
+            <p>Осмотрись в комнате. Не спеши дальше.</p>
           </div>
+          <span className="phoneMessageTime">сейчас</span>
         </div>
+
+        <button className="phoneReset" type="button" onClick={onReset}>Сбросить локальную сессию</button>
       </section>
     </div>
   );

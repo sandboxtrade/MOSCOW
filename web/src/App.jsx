@@ -30,6 +30,7 @@ export default function App() {
   const [dialogueStep, setDialogueStep] = useState(0);
   const [shopOpen, setShopOpen] = useState(false);
   const [phoneOpen, setPhoneOpen] = useState(false);
+  const [questsOpen, setQuestsOpen] = useState(false);
   const [toast, setToast] = useState("");
 
   const phoneOwned = Boolean(progress?.phoneOwned);
@@ -43,7 +44,6 @@ export default function App() {
 
   useEffect(() => {
     if (!accountId) return;
-
     refreshPlayer();
   }, [accountId]);
 
@@ -54,11 +54,11 @@ export default function App() {
     }
   }, [phoneOwned]);
 
-  const nextHint = useMemo(() => {
-    if (!gameStarted) return "Начни новую жизнь";
-    if (!introDone) return "Поговори с проводником";
-    if (!phoneOwned) return "Купи телефон на столе";
-    return "Выход во двор открыт";
+  const objective = useMemo(() => {
+    if (!gameStarted) return { label: "Начало", title: "Начни новую жизнь", step: "0/3" };
+    if (!introDone) return { label: "Задача", title: "Поговори с проводником", step: "1/3" };
+    if (!phoneOwned) return { label: "Задача", title: "Купи телефон на столе", step: "2/3" };
+    return { label: "Свободно", title: "Осмотрись в комнате", step: "3/3" };
   }, [gameStarted, introDone, phoneOwned]);
 
   async function refreshPlayer() {
@@ -114,8 +114,7 @@ export default function App() {
     if (!phoneOwned) {
       setIntroDone(true);
       localStorage.setItem(INTRO_KEY, "1");
-      setToast("Новая задача: купить телефон");
-      window.setTimeout(() => setToast(""), 2600);
+      showToast("Новая задача · купить телефон");
     }
   }
 
@@ -129,8 +128,7 @@ export default function App() {
       await purchaseStarterPhone(accountId);
       await refreshPlayer();
       setShopOpen(false);
-      setToast("Телефон добавлен в инвентарь · −15 000 ₽G");
-      window.setTimeout(() => setToast(""), 3200);
+      showToast("Телефон в инвентаре · −15 000 ₽G", 3200);
       setDialogueStep(99);
       setDialogueOpen(true);
     } catch (err) {
@@ -145,18 +143,18 @@ export default function App() {
     }
   }
 
-  function handleExit() {
-    if (!phoneOwned) return;
-    setToast("Следующая сцена: двор панельки · будет в следующем вертикальном срезе");
-    window.setTimeout(() => setToast(""), 3800);
+  function handleWorkstation() {
+    showToast(
+      phoneOwned
+        ? "Рабочее место · пока только осмотр, но здесь появятся будущие действия"
+        : "Сначала поговори с проводником и разберись с телефоном",
+      3200,
+    );
   }
 
-  function handleWorkstation() {
-    const message = phoneOwned
-      ? "Рабочее место готово для следующей активности. Пока здесь только осмотр."
-      : "Старый компьютер включается, но сначала разберись с проводником и телефоном.";
+  function showToast(message, duration = 2600) {
     setToast(message);
-    window.setTimeout(() => setToast(""), 3200);
+    window.setTimeout(() => setToast(""), duration);
   }
 
   function resetLocalSession() {
@@ -171,6 +169,7 @@ export default function App() {
     setDialogueOpen(false);
     setShopOpen(false);
     setPhoneOpen(false);
+    setQuestsOpen(false);
     setError("");
   }
 
@@ -182,25 +181,65 @@ export default function App() {
             className="startBackdrop"
             style={{ "--room-background": `url("${publicAsset("assets/apartment-room-approved.png")}")` }}
           />
-          <div className="startNoise" />
+          <div className="startAurora" aria-hidden="true" />
+          <div className="startNoise" aria-hidden="true" />
+          <div className="startScanline" aria-hidden="true" />
 
-          <div className="startContent">
-            <div className="startKicker">MOSCOW / 00:47</div>
-            <h1>Город никого<br />не ждёт.</h1>
-            <p>
-              Комната в панельке, 200 000 ₽G стартовых денег и один знакомый,
-              который обещал показать, как тут всё устроено.
-            </p>
+          <div className="startChrome">
+            <div className="startTopline">
+              <span className="startTag">MOSCOW</span>
+              <span className="startTag muted">пролог · панельки</span>
+              <span className="startTag muted">ночь</span>
+            </div>
 
-            <button className="startButton" onClick={startGame} disabled={busy}>
-              {busy ? "Создаём игрока..." : "Войти в Москву"}
-            </button>
+            <div className="startContent">
+              <div className="startHero">
+                <div className="startKicker">СТАРТОВАЯ ЛОКАЦИЯ</div>
+                <h1>Комната.<br />Первая точка.</h1>
+                <p>
+                  Сейчас это стартовое меню — временный пролог перед сюжетной видеовставкой.
+                  Но даже в таком виде оно должно задавать атмосферу: ночь, Москва за окном,
+                  бедная комната и первые деньги на старт.
+                </p>
 
-            {error && <div className="startError">{error}</div>}
+                <div className="startMetaRow">
+                  <div className="startStatCard">
+                    <span>СТАРТ</span>
+                    <strong>200 000 ₽G</strong>
+                    <small>невыводимый баланс</small>
+                  </div>
+                  <div className="startStatCard">
+                    <span>СТАТУС</span>
+                    <strong>FREE</strong>
+                    <small>новый игрок</small>
+                  </div>
+                </div>
+
+                <button className="startButton" onClick={startGame} disabled={busy}>
+                  {busy ? "Создаём игрока..." : "Начать"}
+                </button>
+
+                {error && <div className="startError">{error}</div>}
+              </div>
+
+              <aside className="startSideCard">
+                <span className="panelEyebrow">ОТ ЧЕГО СТАРТУЕМ</span>
+                <strong>Первая сцена</strong>
+                <ul>
+                  <li>комната в панельке ночью</li>
+                  <li>проводник для первых шагов</li>
+                  <li>телефон как первый инструмент</li>
+                </ul>
+                <div className="startSideNote">
+                  Позже этот экран будет заменён сюжетным видео-вступлением,
+                  поэтому здесь сейчас важны ритм, атмосфера и читаемость.
+                </div>
+              </aside>
+            </div>
           </div>
         </section>
       ) : (
-        <>
+        <section className="gameViewport">
           <TopHud wallet={wallet} account={account} online={online} />
 
           <section className="gameFrame">
@@ -209,16 +248,29 @@ export default function App() {
               phoneOwned={phoneOwned}
               onGuide={openGuide}
               onPhone={() => setShopOpen(true)}
-              onExit={handleExit}
               onWorkstation={handleWorkstation}
             />
 
-            <QuestPanel introDone={introDone} phoneOwned={phoneOwned} />
+            <button
+              className="objectiveChip"
+              type="button"
+              onClick={() => setQuestsOpen((value) => !value)}
+              aria-expanded={questsOpen}
+            >
+              <span className="objectiveIndex">{objective.step}</span>
+              <span className="objectiveCopy">
+                <small>{objective.label}</small>
+                <strong>{objective.title}</strong>
+              </span>
+              <span className="objectiveChevron">{questsOpen ? "−" : "+"}</span>
+            </button>
 
-            <div className="nextHint">
-              <span>СЕЙЧАС</span>
-              <strong>{nextHint}</strong>
-            </div>
+            <QuestPanel
+              open={questsOpen}
+              introDone={introDone}
+              phoneOwned={phoneOwned}
+              onClose={() => setQuestsOpen(false)}
+            />
 
             <DialogueBox
               visible={dialogueOpen}
@@ -230,34 +282,45 @@ export default function App() {
           </section>
 
           <footer className="bottomBar">
-            <button className="navButton active"><span>⌂</span>Комната</button>
-            <button className="navButton" disabled><span>⌖</span>Карта</button>
+            <button className="navButton active" type="button">
+              <span className="navGlyph">⌂</span>
+              <span>Комната</span>
+            </button>
             <button
               className={`navButton ${phoneOwned ? "available" : ""}`}
+              type="button"
               disabled={!phoneOwned}
               onClick={() => setPhoneOpen(true)}
-            ><span>▦</span>Телефон</button>
-            <button className="navButton" onClick={resetLocalSession}><span>↺</span>Сброс</button>
+            >
+              <span className="navGlyph">▦</span>
+              <span>Телефон</span>
+            </button>
+            <button className="navButton" type="button" onClick={() => setQuestsOpen(true)}>
+              <span className="navGlyph">≡</span>
+              <span>Задачи</span>
+            </button>
           </footer>
-
-          <PhonePanel
-            open={phoneOpen}
-            wallet={wallet}
-            onClose={() => setPhoneOpen(false)}
-          />
-
-          <PhoneShopModal
-            open={shopOpen}
-            wallet={wallet}
-            busy={busy}
-            error={error}
-            onBuy={buyPhone}
-            onClose={() => !busy && setShopOpen(false)}
-          />
-
-          {toast && <div className="toast">{toast}</div>}
-        </>
+        </section>
       )}
+
+      <PhonePanel
+        open={phoneOpen}
+        wallet={wallet}
+        phoneOwned={phoneOwned}
+        onClose={() => setPhoneOpen(false)}
+        onReset={resetLocalSession}
+      />
+
+      <PhoneShopModal
+        open={shopOpen}
+        wallet={wallet}
+        busy={busy}
+        error={error}
+        onBuy={buyPhone}
+        onClose={() => !busy && setShopOpen(false)}
+      />
+
+      {toast && <div className="toast">{toast}</div>}
     </main>
   );
 }

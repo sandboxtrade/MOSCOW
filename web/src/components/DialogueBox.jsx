@@ -5,11 +5,11 @@ const lines = [
   },
   {
     title: "Проводник",
-    text: "Москва тут простая: без инструментов далеко не уедешь. Начни с телефона.",
+    text: "Пока не спеши. Сначала возьми телефон — без него дальше будет неудобно.",
   },
   {
     title: "Проводник",
-    text: "На столе есть вариант за 15 000 ₽G. Стартовые деньги тратить можно, вывести их нельзя.",
+    text: "На столе есть простой вариант за 15 000 ₽G. Стартовые деньги тратить можно, вывести их нельзя.",
   },
 ];
 
@@ -19,14 +19,15 @@ export default function DialogueBox({ visible, step, onNext, onClose, phoneOwned
   const finalLine = phoneOwned
     ? {
         title: "Проводник",
-        text: "Нормально. Телефон есть. Дальше спустимся во двор и начнём открывать город.",
+        text: "Нормально. Телефон есть. Осмотрись здесь — дальше решим, чем займёмся.",
       }
     : lines[Math.min(step, lines.length - 1)];
 
   const isLast = phoneOwned || step >= lines.length - 1;
+  const displayStep = phoneOwned ? "ГОТОВО" : `${Math.min(step + 1, lines.length)}/${lines.length}`;
 
   return (
-    <section className="dialogueBox">
+    <section className="dialogueBox" role="dialog" aria-label="Диалог с проводником">
       <div className="guidePortrait" aria-hidden="true">
         <span className="hair" />
         <span className="face" />
@@ -34,7 +35,10 @@ export default function DialogueBox({ visible, step, onNext, onClose, phoneOwned
       </div>
 
       <div className="dialogueCopy">
-        <strong>{finalLine.title}</strong>
+        <div className="dialogueMeta">
+          <strong>{finalLine.title}</strong>
+          <span>{displayStep}</span>
+        </div>
         <p>{finalLine.text}</p>
       </div>
 
@@ -43,7 +47,7 @@ export default function DialogueBox({ visible, step, onNext, onClose, phoneOwned
         onClick={isLast ? onClose : onNext}
         aria-label={isLast ? "Закрыть диалог" : "Следующая реплика"}
       >
-        {isLast ? "×" : "›"}
+        <span>{isLast ? "×" : "›"}</span>
       </button>
     </section>
   );

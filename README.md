@@ -58,7 +58,7 @@ npm.cmd run deploy:api
 
 ## Current playable version
 
-`v0.3.2` contains the approved apartment background integration, layered player/guide/phone/workstation/exit interactions, guide dialogue, quest progression, phone purchase and server-backed wallet/inventory update.
+`v0.3.9` keeps the experience inside the first approved room and focuses on interface polish. The current slice includes the approved room background integration, layered player/guide/phone/workstation interactions, guide dialogue, task progression, phone purchase, server-backed wallet/inventory update, phone screen, a refined start screen, and light ambient motion/glow to make the room feel alive without turning it into a fully animated scene.
 
 ## Automatic deployment
 
