@@ -189,7 +189,7 @@ export default function App() {
           <div className="startChrome">
             <div className="startTopline">
               <span className="startTag">MOSCOW</span>
-              <span className="startTag buildTag">v0.3.14 · LIVE</span>
+              <span className="startTag buildTag">v0.3.17 · PIXEL</span>
               <span className="startTag muted">пролог · панельки</span>
               <span className="startTag muted">ночь</span>
             </div>
@@ -197,11 +197,10 @@ export default function App() {
             <div className="startContent">
               <div className="startHero">
                 <div className="startKicker">СТАРТОВАЯ ЛОКАЦИЯ</div>
-                <h1>Комната.<br />Первая точка.</h1>
+                <h1>Ночь.<br />Точка отсчёта.</h1>
                 <p>
-                  Сейчас это стартовое меню — временный пролог перед сюжетной видеовставкой.
-                  Но даже в таком виде оно должно задавать атмосферу: ночь, Москва за окном,
-                  бедная комната и первые деньги на старт.
+                  Москва за окном живёт своей жизнью. У тебя — старая комната,
+                  первые деньги и несколько решений, с которых всё начнётся.
                 </p>
 
                 <div className="startMetaRow">
@@ -225,16 +224,16 @@ export default function App() {
               </div>
 
               <aside className="startSideCard">
-                <span className="panelEyebrow">ОТ ЧЕГО СТАРТУЕМ</span>
-                <strong>Первая сцена</strong>
+                <span className="panelEyebrow">ПРОЛОГ · 01</span>
+                <strong>Панелька. Ночь.</strong>
                 <ul>
-                  <li>комната в панельке ночью</li>
-                  <li>проводник для первых шагов</li>
-                  <li>телефон как первый инструмент</li>
+                  <li>поговорить с проводником</li>
+                  <li>найти первый инструмент</li>
+                  <li>разобраться, с чего начать</li>
                 </ul>
                 <div className="startSideNote">
-                  Позже этот экран будет заменён сюжетным видео-вступлением,
-                  поэтому здесь сейчас важны ритм, атмосфера и читаемость.
+                  Начало истории — одна небольшая комната.
+                  Дальше всё зависит от твоих решений.
                 </div>
               </aside>
             </div>
@@ -245,7 +244,7 @@ export default function App() {
           <TopHud wallet={wallet} account={account} online={online} />
 
           <section className="gameFrame">
-            <span className="buildStamp">v0.3.14 · LIVE ROOM</span>
+            <span className="buildStamp">v0.3.17 · PIXEL ROOM</span>
             <ApartmentScene
               introDone={introDone}
               phoneOwned={phoneOwned}

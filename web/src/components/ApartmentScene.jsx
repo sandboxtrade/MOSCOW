@@ -1,93 +1,4 @@
-function iso(x, y, z = 0) {
-  return {
-    x: 400 + (x - y) * 0.82,
-    y: 500 + (x + y) * 0.45 - z,
-  };
-}
-
-function pts(...points) {
-  return points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ");
-}
-
-function IsoBlock({ x, y, w, d, h, top, left, right, className = "" }) {
-  const a = iso(x, y, h);
-  const b = iso(x + w, y, h);
-  const c = iso(x + w, y + d, h);
-  const d1 = iso(x, y + d, h);
-  const a0 = iso(x, y, 0);
-  const b0 = iso(x + w, y, 0);
-  const c0 = iso(x + w, y + d, 0);
-  const d0 = iso(x, y + d, 0);
-
-  return (
-    <g className={`isoBlock ${className}`}>
-      <polygon points={pts(a, b, c, d1)} fill={top} />
-      <polygon points={pts(a, d1, d0, a0)} fill={left} />
-      <polygon points={pts(b, c, c0, b0)} fill={right} />
-    </g>
-  );
-}
-
-function RoomPerson({ x, y, guide = false, talking = false }) {
-  const p = iso(x, y, 0);
-  const scale = guide ? 1.06 : 1;
-
-  return (
-    <g
-      className={`roomPerson ${guide ? "guidePerson" : "playerPerson"} ${talking ? "talking" : ""}`}
-      transform={`translate(${p.x} ${p.y}) scale(${scale})`}
-    >
-      <ellipse className="personShadow" cx="0" cy="7" rx="34" ry="12" />
-      <g className="personBody">
-        <path className="personLeg personLegBack" d="M-17,-45 L-10,-5 L-15,14 L-26,14 L-29,-39 Z" />
-        <path className="personLeg personLegFront" d="M4,-48 L14,-5 L11,16 L0,16 L-4,-41 Z" />
-        <path className="personCargoPocket leftPocket" d="M-23,-43 L-10,-41 L-12,-26 L-25,-29 Z" />
-        <path className="personCargoPocket rightPocket" d="M8,-43 L21,-40 L19,-25 L7,-28 Z" />
-        <path className="personShoe leftShoe" d="M-28,10 L-8,10 L1,16 L-31,18 Z" />
-        <path className="personShoe rightShoe" d="M-1,11 L18,11 L27,17 L-5,19 Z" />
-
-        {!guide && <path className="playerCoatTail" d="M-31,-97 Q-7,-82 1,-70 L-9,-48 L-26,-54 L-35,-77 Z" />}
-        <path className="personTorso" d="M-30,-110 Q0,-126 31,-108 L28,-63 Q13,-45 -1,-49 Q-18,-50 -28,-64 Z" />
-        <path className="personChest" d="M-12,-102 Q0,-108 11,-101 L9,-67 Q0,-61 -10,-67 Z" />
-        <path className="personNeck" d="M-8,-133 L8,-133 L9,-117 L-9,-117 Z" />
-        <path className="personHood" d="M-27,-118 Q-11,-144 14,-141 Q24,-138 30,-118 L17,-101 Q-1,-111 -17,-101 Z" />
-        <path className="personInnerHood" d="M-15,-114 Q-2,-125 11,-113 L6,-103 Q-2,-108 -10,-103 Z" />
-        <path className="personArm personArmBack" d={talking ? "M-26,-103 Q-42,-87 -34,-60" : "M-26,-103 Q-40,-82 -34,-56"} />
-        <path className="personArm personArmFront" d={talking ? "M22,-102 Q41,-92 50,-72" : "M24,-103 Q35,-80 30,-55"} />
-        {talking && <circle className="personHand" cx="52" cy="-70" r="6" />}
-
-        <g className="personHeadGroup">
-          <path className="personEar" d="M-26,-132 Q-26,-124 -21,-122" />
-          <path className="personHead" d="M-23,-150 Q-18,-174 0,-176 Q19,-176 24,-156 Q25,-136 18,-125 Q10,-116 -2,-115 Q-18,-117 -23,-150 Z" />
-          <path className="personJawShadow" d="M-8,-123 Q4,-118 17,-126" />
-          <path className="personHair" d="M-23,-151 Q-22,-174 -6,-180 L3,-188 L8,-180 Q19,-177 27,-159 Q16,-164 9,-158 Q2,-163 -5,-160 Q-14,-164 -23,-151 Z" />
-          <path className="personHairGlow" d="M-7,-183 L4,-189 L13,-177" />
-          <circle className="personEye" cx="-8" cy="-144" r="2.1" />
-          <circle className="personEye" cx="8" cy="-144" r="2.1" />
-          <path className="personBrow" d="M-13,-148 L-4,-149" />
-          <path className="personBrow" d="M4,-149 L13,-147" />
-          <path className="personNose" d="M1,-140 L-1,-132 L2,-131" />
-          <path className="personMouth" d="M-6,-125 Q0,-122 7,-125" />
-          {guide && <path className="guideScar" d="M17,-145 L12,-138" />}
-        </g>
-
-        {guide ? (
-          <>
-            <path className="guideStrap" d="M-19,-111 L24,-55" />
-            <path className="guideBag" d="M8,-72 L33,-60 L25,-35 L-1,-46 Z" />
-            <path className="guideBagZip" d="M12,-55 L26,-48" />
-          </>
-        ) : (
-          <>
-            <path className="playerZip" d="M0,-103 L0,-60" />
-            <path className="playerHarness" d="M18,-104 Q7,-83 10,-58" />
-          </>
-        )}
-      </g>
-    </g>
-  );
-}
-
+import { memo, useEffect, useRef, useState } from "react";
 function InteractionMarker({ icon, text }) {
   return (
     <span className="interactionMarker" aria-hidden="true">
@@ -98,359 +9,789 @@ function InteractionMarker({ icon, text }) {
   );
 }
 
-function RoomWorld({ guideTalking }) {
-  const floorA = iso(0, 0, 0);
-  const floorB = iso(430, 0, 0);
-  const floorC = iso(430, 390, 0);
-  const floorD = iso(0, 390, 0);
+// Pure deterministic details: no remote textures or random rendering between frames.
+const rand01 = (n) => ((Math.sin(n * 127.1 + 42.73) * 43758.5453) % 1 + 1) % 1;
+const roomMarks = Array.from({ length: 128 }, (_, n) => ({
+  x: 3 + Math.floor(rand01(n + 200) * 351),
+  y: 9 + Math.floor(rand01(n + 340) * 268),
+  w: 1 + (n % 3 === 0 ? 2 : 0),
+  c: n % 5 === 0 ? '#251f27' : n % 3 === 0 ? '#ab8c7e' : '#302b32',
+  a: n % 5 === 0 ? .28 : .16,
+}));
+const floorMarks = Array.from({ length: 108 }, (_, n) => ({
+  x: 2 + Math.floor(rand01(n + 800) * 355),
+  y: 298 + Math.floor(rand01(n + 925) * 238),
+  w: 2 + (n % 4),
+  c: n % 3 === 0 ? '#a27a56' : '#1e1b1a',
+  a: n % 3 === 0 ? .24 : .2,
+}));
+const towers = [
+  {x:95,y:112,w:19,c:'#1a283d'}, {x:114,y:100,w:17,c:'#243448'},
+  {x:131,y:120,w:15,c:'#121d2e'}, {x:146,y:88,w:22,c:'#1b2b43'},
+  {x:168,y:106,w:20,c:'#142237'}, {x:188,y:72,w:26,c:'#17243a'},
+  {x:214,y:101,w:17,c:'#1a2638'}, {x:230,y:89,w:20,c:'#152239'},
+];
+const distantTowers = [
+  {x:93,y:105,w:15,h:64}, {x:109,y:94,w:18,h:77},
+  {x:127,y:105,w:16,h:65}, {x:144,y:98,w:17,h:72},
+  {x:163,y:90,w:16,h:83}, {x:179,y:94,w:19,h:75},
+  {x:202,y:91,w:17,h:80}, {x:222,y:102,w:20,h:68},
+];
+const cityWindows = towers.flatMap((b, bi) => {
+  const nodes = [];
+  const rows = Math.floor((166 - b.y - 7) / 8);
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < Math.floor((b.w - 2) / 6); col++) {
+      const x = b.x + 3 + 6 * col;
+      const y = b.y + 4 + 8 * row;
+      const seed = bi * 311 + row * 23 + col * 13;
+      if (rand01(seed + 333) > .3) {
+        nodes.push({x,y,lit: rand01(seed + 115) > .46, tone: seed % 3});
+      }
+    }
+  }
+  return nodes;
+});
 
-  const backTopA = iso(0, 0, 312);
-  const backTopB = iso(430, 0, 312);
-  const rightTopB = iso(430, 0, 312);
-  const rightTopC = iso(430, 390, 312);
-
-  const windowA = iso(74, 0, 252);
-  const windowB = iso(270, 0, 252);
-  const windowC = iso(270, 0, 113);
-  const windowD = iso(74, 0, 113);
-
+function SurfaceWear() {
   return (
-    <svg className="roomWorld" viewBox="0 0 800 1200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-      <defs>
-        <linearGradient id="floorGradient" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#5d4634" />
-          <stop offset="0.52" stopColor="#342a22" />
-          <stop offset="1" stopColor="#1d1a19" />
-        </linearGradient>
-        <linearGradient id="backWallGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#6a605d" />
-          <stop offset="0.62" stopColor="#423d42" />
-          <stop offset="1" stopColor="#2d3036" />
-        </linearGradient>
-        <linearGradient id="rightWallGradient" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#504a4a" />
-          <stop offset="1" stopColor="#252a31" />
-        </linearGradient>
-        <linearGradient id="windowSky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#264b73" />
-          <stop offset="0.45" stopColor="#1a3658" />
-          <stop offset="1" stopColor="#0b1625" />
-        </linearGradient>
-        <linearGradient id="windowFrame" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#d9d9d3" />
-          <stop offset="1" stopColor="#80898e" />
-        </linearGradient>
-        <linearGradient id="curtainGradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#8c8d97" />
-          <stop offset="1" stopColor="#646670" />
-        </linearGradient>
-        <linearGradient id="rugGradient" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#78363f" />
-          <stop offset="1" stopColor="#3b2329" />
-        </linearGradient>
-        <radialGradient id="lampGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0" stopColor="#ffd887" stopOpacity=".52" />
-          <stop offset="1" stopColor="#ffd887" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id="windowGlow" cx="48%" cy="30%" r="75%">
-          <stop offset="0" stopColor="#66b7ff" stopOpacity=".22" />
-          <stop offset="1" stopColor="#66b7ff" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id="cityGlow" cx="50%" cy="0%" r="72%">
-          <stop offset="0" stopColor="#4ec1ff" stopOpacity=".25" />
-          <stop offset="1" stopColor="#4ec1ff" stopOpacity="0" />
-        </radialGradient>
-        <pattern id="floorBoards" width="32" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(28)">
-          <rect width="32" height="16" fill="transparent" />
-          <path d="M0 15.5H32" stroke="#8a715c" strokeOpacity=".19" />
-          <path d="M16 0V16" stroke="#161412" strokeOpacity=".23" />
-        </pattern>
-        <pattern id="wallPaper" width="30" height="38" patternUnits="userSpaceOnUse">
-          <rect width="30" height="38" fill="transparent" />
-          <circle cx="15" cy="10" r="2" fill="#b28f87" fillOpacity=".15" />
-          <path d="M15 11 L10 20 L15 28 L20 20 Z" fill="none" stroke="#a68880" strokeOpacity=".16" />
-          <path d="M9 20 Q15 16 21 20" fill="none" stroke="#b88f87" strokeOpacity=".12" />
-        </pattern>
-        <pattern id="guidePlaid" width="18" height="18" patternUnits="userSpaceOnUse">
-          <rect width="18" height="18" fill="#63313a" />
-          <path d="M0 6H18M0 12H18M6 0V18M12 0V18" stroke="#bbb0aa" strokeOpacity=".42" strokeWidth="2" />
-          <path d="M0 9H18M9 0V18" stroke="#211f23" strokeOpacity=".72" strokeWidth="3" />
-        </pattern>
-        <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur stdDeviation="7" />
-        </filter>
-        <filter id="screenGlow" x="-100%" y="-100%" width="300%" height="300%">
-          <feGaussianBlur stdDeviation="5" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-
-      <rect className="roomVoid" width="800" height="1200" fill="#060a10" />
-      <ellipse className="roomVignette" cx="410" cy="640" rx="420" ry="560" fill="#0c1721" opacity=".6" />
-      <ellipse className="roomAmbientPool" cx="418" cy="695" rx="286" ry="190" />
-
-      <polygon className="backWall" points={pts(backTopA, backTopB, floorB, floorA)} fill="url(#backWallGradient)" />
-      <polygon points={pts(backTopA, backTopB, floorB, floorA)} fill="url(#wallPaper)" />
-      <polygon className="rightWall" points={pts(rightTopB, rightTopC, floorC, floorB)} fill="url(#rightWallGradient)" />
-      <polygon className="floorPlane" points={pts(floorA, floorB, floorC, floorD)} fill="url(#floorGradient)" />
-      <polygon points={pts(floorA, floorB, floorC, floorD)} fill="url(#floorBoards)" />
-
-      <g className="wallDecor backWallDecor">
-        <path className="ceilingPipe" d="M358 254 L714 424" />
-        <path className="ceilingPipe" d="M609 265 L609 448" />
-        <path className="ceilingPipe" d="M664 291 L664 473" />
-        <g className="posterStack">
-          <polygon points="123,457 172,479 170,560 120,536" fill="#dfdacd" stroke="#654f45" strokeWidth="3" />
-          <polygon points="127,462 166,480 164,550 125,532" fill="#b4382f" opacity=".88" />
-          <path d="M136 490 L161 500 M136 507 L158 516" stroke="#f7ead7" strokeWidth="3" opacity=".8" />
-          <polygon points="130,381 183,405 178,455 126,431" fill="#d2d0c9" stroke="#5f554f" strokeWidth="3" />
-          <circle cx="144" cy="405" r="11" fill="#bcb7b0" />
-          <circle cx="164" cy="414" r="11" fill="#202229" />
-        </g>
+    <g pointerEvents="none" aria-hidden="true">
+      <g className="pixelWallpaperWear">
+        {roomMarks.map((m,i) => <rect key={`wm-${i}`} x={m.x} y={m.y} width={m.w} height={i%9===0?3:1} fill={m.c} opacity={m.a} />)}
+        <path d="M0 7 H360 M0 290 H360" fill="none" stroke="#a08378" strokeOpacity=".21" strokeWidth="1" />
+        <path d="M2 285H360" stroke="#19181c" strokeWidth="3" />
+        <path d="M6 287 H359" stroke="#88654f" strokeOpacity=".75" />
+        <path d="M311 48 V243 M338 32 V241" stroke="#2b2930" strokeWidth="1" />
+        {[46,90,140,202].map((y) => <g key={y}><rect x="305" y={y} width="15" height="3" fill="#33383e" /><rect x="307" y={y} width="11" height="1" fill="#9a928e" opacity=".4" /></g>)}
       </g>
-
-      <g className="windowGroup">
-        <polygon points={pts(windowA, windowB, windowC, windowD)} fill="url(#windowFrame)" stroke="#d7d9d1" strokeWidth="4" />
-        <polygon
-          className="windowGlass"
-          points={pts(iso(86, 0, 239), iso(258, 0, 239), iso(258, 0, 126), iso(86, 0, 126))}
-          fill="url(#windowSky)"
-        />
-        <polygon className="windowGlassSheen" points="415,305 570,380 571,402 426,338" />
-        <path className="windowFrameLine" d="M493 282 L493 394" />
-        <path className="windowFrameLine" d="M409 340 L575 414" />
-        <g className="citySilhouette">
-          <path d="M451 337 L451 300 L468 300 L468 287 L484 287 L484 318 L497 318 L497 271 L517 271 L517 327 L530 327 L530 257 L546 257 L546 323 L561 323 L561 287 L578 287 L578 341 Z" fill="#0d1622" />
-          <path d="M459 344 L459 291 L474 291 L474 304 L485 304 L485 282 L499 282 L499 315 L517 315 L517 264 L536 264 L536 335 Z" fill="url(#cityGlow)" opacity=".65" />
-          {[
-            [466, 304], [470, 315], [487, 293], [503, 287], [510, 305], [524, 276], [540, 286], [545, 299], [566, 305],
-          ].map(([x, y], index) => (
-            <rect key={index} className={`cityLight light${index}`} x={x} y={y} width="5" height="7" />
-          ))}
-        </g>
-        <g className="curtains">
-          <polygon points="408,285 439,299 429,457 398,443" fill="url(#curtainGradient)" opacity=".92" />
-          <path d="M418 305 L423 451 M428 310 L430 457" stroke="#4f5762" strokeWidth="2" opacity=".65" />
-          <polygon points="574,360 604,374 596,510 564,495" fill="url(#curtainGradient)" opacity=".94" />
-          <path d="M580 382 L586 498 M591 386 L594 505" stroke="#535b67" strokeWidth="2" opacity=".65" />
-        </g>
-        <polygon className="windowBeam" points="408,348 592,432 615,658 368,546" fill="url(#windowGlow)" />
+      <g className="floorWear">
+        {floorMarks.map((m,i) => <rect key={`fm-${i}`} x={m.x} y={m.y} width={m.w} height="1" fill={m.c} opacity={m.a} />)}
+        {Array.from({length:15},(_,i)=><path key={i} d={`M0 ${303+i*18} H360`} stroke="#1b1714" opacity=".32" strokeWidth="1" />)}
+        {Array.from({length:15},(_,i)=><path key={i} d={`M${i*27+4} 298 L${i*27-36} 540`} stroke="#ac7953" opacity=".12" strokeWidth="1" />)}
       </g>
-
-      <g className="radiatorAssembly">
-        <IsoBlock x={198} y={16} w={112} d={18} h={76} top="#7d7971" left="#59544d" right="#46423c" className="radiatorBlock" />
-        <g className="radiatorLines">
-          <path d="M527 476 L527 527" />
-          <path d="M541 482 L541 533" />
-          <path d="M555 488 L555 539" />
-          <path d="M569 494 L569 545" />
-        </g>
-      </g>
-
-      <IsoBlock x={22} y={58} w={62} d={58} h={59} top="#6d5a4b" left="#40342c" right="#302723" className="nightstandBlock" />
-      <g className="nightstandDetails">
-        <path d="M272 544 L304 560" stroke="#2a201c" strokeWidth="4" />
-        <path d="M268 559 L300 574" stroke="#2a201c" strokeWidth="4" />
-        <circle cx="293" cy="551" r="3" fill="#b9915e" />
-        <circle cx="289" cy="566" r="3" fill="#b9915e" />
-        <ellipse cx="269" cy="522" rx="11" ry="6" fill="#433d3d" />
-        <rect x="283" y="513" width="23" height="10" fill="#53637c" opacity=".9" />
-      </g>
-
-      <IsoBlock x={20} y={155} w={155} d={157} h={44} top="#6d6f74" left="#393c40" right="#2a2d31" className="bedBlock" />
-      <g className="bedDetails">
-        <path d="M152 606 L283 664 L181 720 L52 661 Z" fill="#807973" opacity=".8" />
-        <path d="M82 640 Q131 609 184 636 L151 665 Q106 675 70 652 Z" fill="#d6d3cc" opacity=".75" />
-        <path d="M100 657 L187 697" stroke="#484a4f" strokeWidth="4" opacity=".48" />
-        <path d="M52 664 Q89 648 121 671 T183 702" fill="none" stroke="#2a2830" strokeWidth="8" opacity=".55" />
-        <path d="M112 634 Q135 614 160 628" fill="none" stroke="#f0ece1" strokeWidth="5" opacity=".6" />
-      </g>
-
-      <g className="bookshelfBlock">
-        <IsoBlock x={-6} y={300} w={56} d={72} h={116} top="#4d392d" left="#31261e" right="#261f1b" className="leftShelfBlock" />
-        <path className="shelfDivider" d="M95 783 L139 804" />
-        <path className="shelfDivider" d="M83 815 L127 836" />
-        <path className="shelfDivider" d="M71 848 L115 868" />
-        <rect x="93" y="778" width="8" height="18" fill="#2d6b7f" transform="rotate(25 97 788)" />
-        <rect x="106" y="784" width="7" height="20" fill="#8d6346" transform="rotate(24 110 793)" />
-        <rect x="89" y="811" width="7" height="19" fill="#6053a1" transform="rotate(26 93 821)" />
-        <rect x="101" y="818" width="9" height="22" fill="#4f4f5b" transform="rotate(25 105 829)" />
-        <ellipse cx="82" cy="875" rx="16" ry="9" fill="#16161b" />
-        <path d="M72 872 Q82 859 92 872" fill="#292b31" />
-      </g>
-
-      <g className="slippersGroup">
-        <path d="M189 754 Q205 751 214 762 Q199 771 182 765 Z" fill="#243244" />
-        <path d="M207 763 Q223 760 230 770 Q216 778 199 773 Z" fill="#1a2636" />
-      </g>
-
-      <IsoBlock x={132} y={255} w={134} d={95} h={9} top="url(#rugGradient)" left="#2c181d" right="#231417" className="rugBlock" />
-      <g className="rugPattern" opacity=".56">
-        <path d="M214 721 L319 770 L236 816 L135 768 Z" fill="none" stroke="#c18a5c" strokeWidth="4" />
-        <path d="M222 740 L295 774 L236 804 L165 771 Z" fill="none" stroke="#dfb179" strokeWidth="3" />
-        <path d="M237 739 L251 746 L238 753 L226 747 Z" fill="none" stroke="#f0d2a0" strokeWidth="2" />
-      </g>
-
-      <IsoBlock x={163} y={271} w={102} d={68} h={44} top="#785338" left="#473021" right="#33251b" className="coffeeTableBlock" />
-      <g className="coffeeTableDetails">
-        <circle cx="249" cy="718" r="10" fill="#d4b58a" />
-        <circle cx="249" cy="718" r="5" fill="#362c26" />
-        <polygon points="212,706 230,714 228,729 209,721" fill="#bda483" opacity=".88" />
-        <path d="M214 711 L226 716 M213 718 L226 723" stroke="#45352b" strokeWidth="2" opacity=".5" />
-        <ellipse cx="270" cy="732" rx="15" ry="8" fill="#17181c" />
-        <circle cx="270" cy="732" r="4" fill="#454d5b" />
-        <path d="M281 734 Q289 727 289 737" fill="none" stroke="#d4b58a" strokeWidth="3" />
-      </g>
-
-      <IsoBlock x={233} y={310} w={28} d={28} h={32} top="#735341" left="#4c3224" right="#3a261d" className="stoolBlock" />
-
-      <IsoBlock x={290} y={42} w={124} d={146} h={72} top="#705037" left="#432f24" right="#30231c" className="deskBlock" />
-      <g className="deskDetails">
-        <polygon points="585,474 643,501 628,538 571,512" fill="#0b1119" stroke="#3b6885" strokeWidth="3" />
-        <g className="monitorLines" stroke="#4cc8ff" strokeWidth="2" opacity=".9" filter="url(#screenGlow)">
-          <path d="M586 488 L628 506" />
-          <path d="M585 497 L620 511" />
-          <path d="M582 504 L613 517" />
-        </g>
-        <rect x="565" y="520" width="14" height="8" fill="#1a1d23" />
-        <path d="M566 504 L570 523" stroke="#0d1015" strokeWidth="5" />
-        <circle className="deskLampBulb" cx="557" cy="500" r="7.5" fill="#ffe09a" />
-        <circle className="deskLampGlow" cx="557" cy="500" r="58" fill="url(#lampGlow)" />
-        <path d="M557 500 L545 526" stroke="#1e2227" strokeWidth="5" />
-        <path d="M545 526 L527 531" stroke="#1e2227" strokeWidth="5" />
-        <polygon points="527,531 535,535 521,541 514,537" fill="#a09b90" />
-        <rect x="518" y="513" width="12" height="12" fill="#d0c1a6" opacity=".78" />
-        <rect x="533" y="518" width="15" height="9" fill="#40372e" opacity=".8" />
-        <path d="M646 531 L662 538" stroke="#1b1c21" strokeWidth="7" />
-      </g>
-
-      <g className="wallShelf">
-        <polygon points="580,431 673,474 667,489 574,446" fill="#563e2d" />
-        <rect x="588" y="421" width="8" height="24" fill="#915d4a" transform="rotate(24 592 433)" />
-        <rect x="599" y="426" width="9" height="22" fill="#5470a3" transform="rotate(24 603 437)" />
-        <rect x="611" y="431" width="9" height="20" fill="#8a8a83" transform="rotate(24 615 441)" />
-        <rect x="625" y="437" width="9" height="18" fill="#79484d" transform="rotate(24 629 446)" />
-        <rect x="638" y="441" width="10" height="21" fill="#587d70" transform="rotate(24 643 451)" />
-        <path d="M651 447 Q661 430 672 443 Q669 459 656 463" fill="#5c8b5a" />
-        <ellipse cx="650" cy="456" rx="10" ry="5" fill="#6d5948" />
-      </g>
-
-      <g className="wallPhotos">
-        <polygon points="613,487 636,497 633,516 610,505" fill="#d1cec8" stroke="#665f58" strokeWidth="2" />
-        <polygon points="641,500 662,510 659,528 638,519" fill="#c9c5be" stroke="#68615a" strokeWidth="2" />
-        <polygon points="668,512 690,522 687,541 665,531" fill="#cdcac3" stroke="#6b655e" strokeWidth="2" />
-        <path d="M618 495 L629 500 M620 501 L630 506" stroke="#547fa4" strokeWidth="2" opacity=".65" />
-        <path d="M646 507 L655 511 M645 515 L656 520" stroke="#8f7257" strokeWidth="2" opacity=".65" />
-        <path d="M671 519 L683 525" stroke="#596e8b" strokeWidth="2" opacity=".65" />
-      </g>
-
-      <IsoBlock x={366} y={226} w={63} d={71} h={166} top="#d0cfc8" left="#878a86" right="#686d6c" className="fridgeBlock" />
-      <g className="fridgeDetails">
-        <path d="M598 576 L639 595" stroke="#32393f" strokeWidth="4" />
-        <circle cx="623" cy="626" r="5" fill="#4fb7ff" opacity=".46" />
-        <circle cx="636" cy="632" r="5" fill="#dd8a76" opacity=".42" />
-        <rect x="612" y="605" width="17" height="10" fill="#f0e7c7" opacity=".6" transform="rotate(24 620 610)" />
-      </g>
-
-      <g className="microwaveGroup">
-        <IsoBlock x={357} y={184} w={52} d={32} h={28} top="#d1d2d6" left="#9ea3a9" right="#7b8088" className="microwaveBlock" />
-        <polygon points="633,527 659,539 651,554 625,542" fill="#0c1118" stroke="#58697e" strokeWidth="2" />
-        <circle cx="661" cy="548" r="3" fill="#5ab6ff" opacity=".62" />
-      </g>
-
-      <g className="eggTrayGroup">
-        <IsoBlock x={372} y={286} w={25} d={20} h={14} top="#cfc1a8" left="#b4a78f" right="#9b8f7b" className="eggTrayBlock" />
-        <circle cx="616" cy="645" r="3.5" fill="#eee7d9" />
-        <circle cx="624" cy="648" r="3.5" fill="#eee7d9" />
-        <circle cx="632" cy="651" r="3.5" fill="#eee7d9" />
-      </g>
-
-      <g className="kitchenCabinetBlock">
-        <IsoBlock x={382} y={342} w={54} d={66} h={84} top="#614634" left="#3f2d23" right="#30231d" className="kitchenBaseBlock" />
-        <polygon points="685,707 737,731 735,810 683,786" fill="#f0efeb" stroke="#9c9c9c" strokeWidth="3" />
-        <circle cx="721" cy="771" r="7" fill="#1b1f24" />
-        <circle cx="705" cy="764" r="7" fill="#1b1f24" />
-        <rect x="694" y="748" width="16" height="16" fill="#d9d9d9" />
-        <path d="M674 801 L686 807" stroke="#6d7d88" strokeWidth="3" />
-      </g>
-
-      <g className="doorOnWall">
-        <polygon points="696,437 742,459 742,607 696,585" fill="#241c19" stroke="#674b3b" strokeWidth="4" />
-        <circle cx="706" cy="558" r="4" fill="#d0a96d" />
-        <path d="M730 470 L730 598" stroke="#4d3428" strokeWidth="2" opacity=".55" />
-      </g>
-      <g className="coatHook">
-        <path d="M688 528 L696 531" stroke="#88939f" strokeWidth="3" />
-        <path d="M701 534 Q712 557 704 580 L689 573 Q684 548 691 535" fill="#d58ca0" opacity=".78" />
-      </g>
-      <g className="hangingBulb">
-        <path d="M725 322 L725 421" stroke="#222428" strokeWidth="3" />
-        <circle cx="726" cy="432" r="11" fill="#f0c768" />
-        <circle cx="726" cy="432" r="44" fill="url(#lampGlow)" opacity=".42" />
-      </g>
-
-      <g className="phoneInWorld">
-        <polygon points="516,584 531,591 523,605 507,598" fill="#0a1823" stroke="#5bc7ff" strokeWidth="2" />
-        <path className="phonePing" d="M514 590 L524 595" stroke="#67d7ff" strokeWidth="2" />
-      </g>
-
-      <RoomPerson x={147} y={281} />
-      <RoomPerson x={307} y={226} guide talking={guideTalking} />
-
-      <g className="foregroundRail">
-        <path d="M54 887 L154 933 L154 972 L54 926 Z" fill="#291d17" opacity=".95" />
-        <path d="M156 932 L223 963 L223 1003 L156 971 Z" fill="#33241d" opacity=".95" />
-      </g>
-
-      <g className="floatingDust" fill="#b9d8e8">
-        <circle cx="306" cy="431" r="2" />
-        <circle cx="355" cy="474" r="1.5" />
-        <circle cx="434" cy="405" r="1.8" />
-        <circle cx="512" cy="454" r="1.4" />
-        <circle cx="574" cy="520" r="1.7" />
-        <circle cx="611" cy="462" r="1.2" />
-      </g>
-    </svg>
+    </g>
   );
 }
 
-export default function ApartmentScene({ introDone, phoneOwned, guideTalking, onGuide, onPhone, onWorkstation }) {
-  function handlePointerMove(event) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-    event.currentTarget.style.setProperty("--room-look-x", `${x * 10}px`);
-    event.currentTarget.style.setProperty("--room-look-y", `${y * 6}px`);
-  }
+function CityDepth() {
+  return (
+    <g className="pixelCityDepth" clipPath="url(#cityWindowClip)">
+      <rect x="93" y="43" width="156" height="121" fill="#233b60" />
+      <rect x="94" y="45" width="155" height="31" fill="#2c4c73" opacity=".54" />
+      <path d="M93 102H249 M93 87H249" stroke="#7695b0" strokeOpacity=".12" />
+      {Array.from({length:34},(_,i)=>{
+        const x=95+Math.floor(rand01(i+495)*148), y=48+Math.floor(rand01(i+629)*56);
+        return <rect key={i} x={x} y={y} width="1" height="1" fill={i%3===0?'#c4d5e9':'#81a0c1'} opacity={i%4===0?.68:.27} />;
+      })}
+      <g opacity=".5">
+        {distantTowers.map((b,i)=><g key={i}>
+          <rect x={b.x} y={b.y} width={b.w} height={b.h} fill={i%2?'#324965':'#344c6e'} />
+          {Array.from({length:Math.floor((b.h-8)/9)},(_,row)=>
+            <rect key={row} x={b.x+3+(row%2)*6} y={b.y+3+row*9} width="2" height="3" fill="#ffe0a4" opacity={row%3===0?.4:.12}/>
+          )}
+        </g>)}
+      </g>
+      <rect x="187" y="59" width="22" height="15" fill="#27354c" opacity=".65" />
+      <rect x="197" y="62" width="2" height="20" fill="#26364d" />
+      <rect className="beaconLight" x="198" y="56" width="2" height="3" fill="#ff7180" />
+      <g className="pixelCityNear">
+        {towers.map((b,i)=><g key={i}>
+          <rect x={b.x} y={b.y} width={b.w} height={169-b.y} fill={b.c}/>
+          <rect x={b.x+2} y={b.y+1} width="2" height={168-b.y} fill="#70839b" opacity=".16"/>
+          <rect x={b.x+b.w-3} y={b.y+1} width="2" height={168-b.y} fill="#050f20" opacity=".45"/>
+          <rect x={b.x} y={b.y} width={b.w} height="2" fill="#45566a" opacity=".32"/>
+        </g>)}
+        {cityWindows.map((w,i)=><rect key={i} className={w.lit && i % 6 === 0 ? `pixelCityLight delay-${i%8}` : undefined} x={w.x} y={w.y} width="2" height="3" fill={w.lit?(w.tone===0?'#ffd894':'#e9bc7a'):'#0a1324'} opacity={w.lit?.84:.75}/>)}
+      </g>
+      <g opacity=".32">
+        <path d="M94 147 L128 136 L132 170 L94 170Z" fill="#0b192c"/>
+        <path d="M203 150 L242 132 L250 164 L203 170Z" fill="#091425"/>
+      </g>
+      <g className="windowReflections">
+        <path d="M96 49 L106 49 L128 163 L120 163Z" fill="#8cc0eb" opacity=".065" />
+        <rect x="166" y="43" width="3" height="125" fill="#96bee5" opacity=".08" />
+      </g>
+    </g>
+  );
+}
 
-  function resetPointer(event) {
-    event.currentTarget.style.setProperty("--room-look-x", "0px");
-    event.currentTarget.style.setProperty("--room-look-y", "0px");
+function ApartmentClutter() {
+  return (
+    <g className="pixelApartmentClutter" pointerEvents="none">
+      {/* Framed monochrome apartment photos */}
+      <rect x="16" y="188" width="29" height="25" fill="#302b2a" stroke="#827365" strokeWidth="2" />
+      <rect x="19" y="192" width="23" height="17" fill="#796d68" />
+      <path d="M20 208L30 198L40 206" fill="#423f44" />
+      <rect x="21" y="196" width="6" height="6" fill="#b5a29a"/>
+      {/* sockets, a damp stain and radiator plumbing */}
+      <rect x="47" y="276" width="13" height="9" fill="#9b9183" /><rect x="49" y="278" width="9" height="5" fill="#6b655f" />
+      <rect x="50" y="279" width="2" height="2" fill="#27272b" /><rect x="55" y="279" width="2" height="2" fill="#27272b" />
+      <path d="M118 251H126 V268H134" stroke="#9a948b" strokeWidth="3" fill="none" />
+      <path d="M119 250H124" stroke="#413e3c" strokeWidth="1" />
+      <path d="M223 248H233V267" stroke="#73716c" strokeWidth="3" fill="none" />
+      {/* Rug fringe and richer ornamentation */}
+      {Array.from({length:27},(_,i)=><g key={`fr-${i}`}>
+        <rect x={52+i*8} y="492" width="2" height={i%3===0?5:3} fill={i%2?'#a87a55':'#704842'}/>
+        <rect x={82+i*6} y="348" width="2" height="2" fill="#d4a36e" opacity=".6"/>
+      </g>)}
+      <path d="M65 475 L274 475 M91 362L240 362" stroke="#b98d57" opacity=".55" strokeWidth="1" />
+      {Array.from({length:25},(_,i)=>{
+        const col=i%5, row=Math.floor(i/5), x=105+col*31,y=378+row*20;
+        return <g key={`mot-${i}`} opacity={.44+(i%3)*.1}>
+          <rect x={x} y={y} width="3" height="3" fill="#e1b87a" />
+          <rect x={x+8} y={y+5} width="4" height="2" fill="#343c53" />
+          <rect x={x-6} y={y+7} width="2" height="3" fill="#bd704d" />
+        </g>;
+      })}
+      {/* Paper, instant coffee and stale mug on table */}
+      <rect x="149" y="358" width="17" height="2" fill="#eadcc5" opacity=".62" />
+      <rect x="148" y="364" width="12" height="1" fill="#8e7b6b" />
+      <rect x="193" y="350" width="10" height="2" fill="#ac8258" />
+      <rect x="199" y="363" width="4" height="2" fill="#4a3328" />
+      {/* Bed quilt creases, folds and tiny check pattern */}
+      <path d="M28 281H119 M28 300H117 M28 319H119" stroke="#b8b3a8" strokeOpacity=".23" strokeWidth="1" />
+      {Array.from({length:5},(_,i)=><path key={`b-${i}`} d={`M${38+i*17} 279 V335`} stroke="#2c343f" strokeOpacity=".21" strokeWidth="1"/>)}
+      <path d="M30 288L114 296 M31 320L102 323" fill="none" stroke="#d7c4b3" strokeOpacity=".18" strokeWidth="2" />
+      {/* TV/desk wiring, stickers and loose desk notes */}
+      <path d="M296 230 V260H285V269" fill="none" stroke="#11171c" strokeWidth="2" />
+      <rect x="312" y="247" width="7" height="4" fill="#b4c5d4" opacity=".67" />
+      <rect x="326" y="250" width="5" height="3" fill="#d6c0a4" />
+      <rect x="341" y="307" width="3" height="5" fill="#424343" />
+      {/* book spine glints */}
+      {[267,275,284,292,302].map((x,i)=><rect key={`bs-${i}`} x={x} y={139+i%2*2} width="1" height="13" fill="#c7b49e" opacity=".46"/>)}
+      {/* Light switches, slightly dirty refrigerator and doors */}
+      <rect x="327" y="264" width="5" height="8" fill="#a79f96"/>
+      <rect x="329" y="266" width="2" height="4" fill="#4a4440"/>
+      <rect x="305" y="354" width="47" height="2" fill="#555960" opacity=".35"/>
+      <rect x="312" y="362" width="12" height="2" fill="#e6e2d8" opacity=".26"/>
+      <rect x="302" y="309" width="50" height="2" fill="#f9f8f0" opacity=".32"/>
+      {/* Can and carton near bin */}
+      <rect x="285" y="359" width="7" height="12" fill="#aa7a64" />
+      <rect x="285" y="358" width="7" height="2" fill="#c9a08d" />
+      <rect x="294" y="357" width="4" height="12" fill="#6f8290" />
+      {/* Slippers highlights */}
+      <rect x="83" y="337" width="8" height="1" fill="#707e90" opacity=".7" />
+      <rect x="95" y="339" width="9" height="1" fill="#53647b" opacity=".7" />
+    </g>
+  );
+}
+
+function LightingAndWear() {
+  return (
+    <g pointerEvents="none">
+      {/* Hard stepped pixel light pools, not blurred flat SVG gradients */}
+      <g className="pixelLightingBands" opacity=".64">
+        <polygon points="94,168 250,168 287,321 58,323" fill="#5182a8" opacity=".06" />
+        <polygon points="111,173 231,173 261,283 86,285" fill="#81aacf" opacity=".07" />
+        <polygon points="246,226 322,226 358,340 226,321" fill="#ffd189" opacity=".07" />
+        <polygon points="262,232 312,232 338,309 244,294" fill="#ffc57d" opacity=".07" />
+      </g>
+      {/* Warm pool along desk edge and floor shadows */}
+      <rect x="246" y="253" width="103" height="2" fill="#d4a269" opacity=".35" />
+      <path d="M11 292 H359" stroke="#a17857" strokeOpacity=".25" strokeWidth="1" />
+      <path d="M124 331L226 331L240 344L111 344Z" fill="#100e10" opacity=".24" />
+      <path d="M296 410L354 410L358 417L292 417Z" fill="#07080a" opacity=".3" />
+    </g>
+  );
+}
+
+function BedTextile() {
+  return (
+    <g className="bedFabric" pointerEvents="none">
+      <clipPath id="bedClothClip"><polygon points="25,277 125,277 125,337 25,337" /></clipPath>
+      <g clipPath="url(#bedClothClip)">
+        {Array.from({length: 10},(_,i)=><path key={`quilt-v-${i}`} d={`M${24+i*11} 276 L${25+i*10} 343`} stroke={i%2?'#b9b0a7':'#333540'} strokeWidth={i%3===0?'2':'1'} opacity={i%2?.12:.24}/>)}
+        {Array.from({length: 7},(_,i)=><path key={`quilt-h-${i}`} d={`M26 ${279+i*9} H124`} stroke={i%2?'#efe8df':'#252832'} strokeWidth="1" opacity={i%2?.12:.2}/>)}
+        <path d="M22 321 H123 V334H22Z" fill="#2b3547" opacity=".56" />
+        <path d="M29 323 L47 328 L60 323 L77 330 L93 326 L119 332" fill="none" stroke="#65809c" strokeWidth="2" opacity=".27" />
+      </g>
+      <polygon points="13,250 54,250 73,278 27,278" fill="#ede9e0" opacity=".14" />
+      <path d="M25 275 L57 275 L51 270 L25 270" fill="#c6c1b5" opacity=".55" />
+      <path d="M33 281L115 282" fill="none" stroke="#ffffff" opacity=".18" strokeWidth="1" />
+      <path d="M25 309H112 M25 316H112" stroke="#d1c8bb" strokeOpacity=".12" strokeWidth="1" />
+      <rect x="53" y="331" width="57" height="3" fill="#1d2738" opacity=".58" />
+    </g>
+  );
+}
+
+function PixelDeskChair() {
+  return (
+    <g className="deskChair" pointerEvents="none">
+      {/* compact office chair tucked into the workstation */}
+      <rect x="223" y="282" width="24" height="35" fill="#141b25" />
+      <rect x="226" y="286" width="18" height="27" fill="#344357" />
+      <rect x="227" y="288" width="2" height="20" fill="#5b6a78" opacity=".4" />
+      <path d="M224 310H249V315H224Z" fill="#10161f" />
+      <path d="M224 315H251V322H224Z" fill="#242b34" />
+      <rect x="234" y="322" width="4" height="21" fill="#11171f" />
+      <path d="M220 345H252" stroke="#1b2028" strokeWidth="3" />
+      <rect x="217" y="344" width="7" height="4" fill="#11171c" />
+      <rect x="249" y="344" width="7" height="4" fill="#11171c" />
+    </g>
+  );
+}
+
+function PixelLampGlowFields() {
+  return (
+    <g className="pixelLampFields" pointerEvents="none">
+      <path className="pixelWarmField" d="M248 225H271V236H278V255H286V270H235V256H241V239H248Z" fill="#f7d59a" opacity=".09" />
+      <path className="pixelWarmField" d="M324 149H343V169H349V188H309V170H315V156H324Z" fill="#f5ce85" opacity=".07" />
+      <rect x="269" y="242" width="61" height="2" fill="#e4a873" opacity=".2" />
+      <rect x="220" y="294" width="61" height="2" fill="#bb945f" opacity=".12" />
+    </g>
+  );
+}
+
+const alphabet3x5 = {
+  'А':['010','101','111','101','101'],
+  'Б':['111','100','110','101','110'],
+  'В':['110','101','110','101','110'],
+  'Г':['111','100','100','100','100'],
+  'Д':['011','101','101','111','101'],
+  'Е':['111','100','110','100','111'],
+  'Ж':['101','101','111','101','101'],
+  'К':['101','101','110','101','101'],
+  'Л':['011','101','101','101','101'],
+  'М':['101','111','111','101','101'],
+  'Н':['101','101','111','101','101'],
+  'О':['111','101','101','101','111'],
+  'Р':['110','101','110','100','100'],
+  'С':['111','100','100','100','111'],
+  'Т':['111','010','010','010','010'],
+  'Ь':['100','100','110','101','110'],
+  'Ш':['101','101','101','101','111'],
+  'Ы':['101','101','111','101','111'],
+};
+function PixelBitmapText({ text, x, y, color='#e9daca', scale=1 }) {
+  const nodes=[];
+  [...text].forEach((letter, index) => {
+    const rows=alphabet3x5[letter];
+    if (!rows) return;
+    rows.forEach((row,ri)=> [...row].forEach((v,ci)=> {
+      if(v==='1') nodes.push(<rect key={`${index}-${ri}-${ci}`} x={x+index*4*scale+ci*scale} y={y+ri*scale} width={scale} height={scale} fill={color}/>);
+    }));
+  });
+  return <g shapeRendering="crispEdges">{nodes}</g>;
+}
+
+function PixelPerson({ x, y, guide = false, talking = false, walking = false, facing = 1 }) {
+  const plaid = guide ? "url(#guidePlaidPixel)" : "#182532";
+
+  return (
+    <g
+      className={`pixelPerson ${guide ? "guidePixel" : "playerPixel"} ${talking ? "talking" : ""} ${walking ? "walking" : ""}`}
+      transform={`translate(${x} ${y})`}
+    >
+      <rect className="pixelPersonShadow" x="-13" y="-2" width="28" height="5" />
+      <g transform={`scale(${facing} 1)`}><g className="pixelPersonBody">
+        {/* cast shadow and depth */}
+        <rect x="-14" y="-4" width="30" height="3" fill="#05090d" opacity=".4" />
+        {[[-10, 'left'], [2, 'right']].map(([lx, side]) => (
+          <g key={side} className={`personLegRig ${side}`}>
+            <rect className="pxOutline" x={lx} y="-27" width="10" height="27" />
+            <rect className="pxLeg" x={lx+2} y="-25" width="6" height="22" />
+            <rect x={lx+2} y="-17" width="5" height="2" fill="#35404a" />
+            <rect className="pxShoe" x={lx-1} y="-4" width="12" height="5" />
+            <rect className="pxShoeLight" x={lx+1} y="-3" width="7" height="1" />
+          </g>
+        ))}
+        <g className="personUpperRig">
+        {/* body */}
+        <rect className="pxOutline" x="-14" y="-58" width="29" height="34" />
+        <rect className="pxTorso" x="-12" y="-56" width="25" height="30" fill={plaid} />
+        <rect className="pxTorsoShade" x="-12" y="-33" width="25" height="7" />
+        <rect className="pxHood" x="-10" y="-61" width="21" height="8" />
+        <rect className="pxHoodInner" x="-7" y="-59" width="15" height="5" />
+        {!guide && <rect className="pxPlayerZip" x="0" y="-54" width="1" height="24" />}
+
+        {/* clothing seams, layered pockets, plaid/shading */}
+        <rect x="-10" y="-50" width="7" height="2" fill={guide?'#b98a87':'#3a4b5c'} opacity=".78" />
+        <rect x="6" y="-50" width="6" height="2" fill={guide?'#aa8184':'#4e6171'} opacity=".65" />
+        <rect x="-12" y="-39" width="8" height="8" fill={guide?'#35252d':'#141c25'} opacity=".66" />
+        <rect x="7" y="-39" width="5" height="8" fill={guide?'#392630':'#101922'} opacity=".6" />
+        <rect x="-1" y="-54" width="2" height="24" fill={guide?'#b28d86':'#769cb4'} opacity=".44" />
+        <rect x="-11" y="-56" width="7" height="2" fill="#d0aa9d" opacity={guide ? .36 : .05}/>
+        <rect x="6" y="-56" width="6" height="2" fill="#d0aa9d" opacity={guide ? .36 : .05}/>
+        <rect x="-12" y="-32" width="25" height="2" fill="#1a1c22" opacity=".74" />
+        {/* arms */}
+        <g className="personArmRig left">
+        <rect className="pxOutline" x="-19" y="-53" width="7" height="27" />
+        <rect className="pxArm" x="-17" y="-51" width="4" height="23" fill={guide ? "#703944" : "#1d2b38"} />
+        <rect x="-16" y="-31" width="4" height="4" fill={guide?'#b67959':'#8a6254'} />
+        </g><g className="personArmRig right">
+        {talking ? (
+          <>
+            <rect className="pxOutline" x="13" y="-53" width="7" height="17" />
+            <rect className="pxArm" x="15" y="-51" width="4" height="13" fill="#703944" />
+            <rect className="pxOutline" x="18" y="-39" width="13" height="7" />
+            <rect className="pxArm" x="19" y="-37" width="10" height="4" fill="#703944" />
+            <rect className="pxSkin" x="29" y="-37" width="5" height="5" />
+          </>
+        ) : (
+          <>
+            <rect className="pxOutline" x="13" y="-53" width="7" height="27" />
+            <rect className="pxArm" x="15" y="-51" width="4" height="23" fill={guide ? "#703944" : "#1d2b38"} />
+          </>
+        )}
+
+        {/* cuff and pocket hand */}
+        {!talking && <rect x="15" y="-30" width="4" height="3" fill={guide?'#b67959':'#93654e'}/>}
+        </g>
+        <g className="personHeadRig">
+        {/* neck + head */}
+        <rect className="pxSkinShade" x="-4" y="-65" width="9" height="7" />
+        <rect className="pxOutline" x="-11" y="-84" width="23" height="21" />
+        <rect className="pxSkin" x="-9" y="-82" width="19" height="17" />
+        <rect className="pxSkinShade" x="8" y="-78" width="2" height="10" />
+        <rect className="pxHair" x="-10" y="-86" width="21" height="8" />
+        <rect className="pxHair" x="-7" y="-89" width="5" height="4" />
+        <rect className="pxHair" x="1" y="-91" width="6" height="5" />
+        <rect className="pxHairWarm" x="6" y="-87" width="5" height="2" />
+        <rect className="pxHair" x="-13" y="-83" width="6" height="8" />
+        <rect className="pxHair" x="7" y="-83" width="5" height="5" />
+        <rect className="pxHair" x="-9" y="-92" width="4" height="5" />
+        <rect className="pxHair" x="9" y="-90" width="4" height="6" />
+        <rect x="-7" y="-79" width="12" height="1" fill="#d39474" opacity=".68" />
+        <rect x="-8" y="-67" width="3" height="2" fill="#8c5044" opacity=".44" />
+        <rect x="6" y="-68" width="3" height="2" fill="#8c5044" opacity=".44" />
+        <rect x="-6" y="-63" width="12" height="1" fill="#513c37" opacity=".7" />
+        <rect className="pxBrow" x="-6" y="-76" width="5" height="1" />
+        <rect className="pxBrow" x="3" y="-76" width="5" height="1" />
+        <rect className="pxEye" x="-5" y="-74" width="2" height="2" />
+        <rect className="pxEye" x="5" y="-74" width="2" height="2" />
+        <rect className="pxFaceLine" x="0" y="-70" width="2" height="3" />
+        <rect className="pxMouth" x="-3" y="-67" width="7" height="1" />
+
+        </g>
+        {guide && (
+          <>
+            <rect className="pxBagStrap" x="-8" y="-55" width="3" height="28" transform="rotate(-25 -8 -55)" />
+            <rect className="pxOutline" x="7" y="-39" width="15" height="13" />
+            <rect className="pxBag" x="9" y="-37" width="11" height="9" />
+            <rect className="pxBagZip" x="11" y="-34" width="7" height="1" />
+            <rect x="15" y="-54" width="2" height="4" fill="#d4aa80" opacity=".65" />
+            <rect x="12" y="-36" width="2" height="2" fill="#473740" />
+            <rect x="17" y="-35" width="2" height="2" fill="#53444c" />
+            <rect x="10" y="-30" width="9" height="1" fill="#625459" opacity=".54"/>
+            <rect className="pxScar" x="8" y="-73" width="1" height="4" />
+          </>
+        )}
+      </g></g></g>
+    </g>
+  );
+}
+
+const ApartmentPixelWorld = memo(function ApartmentPixelWorld({ phoneOwned }) {
+  const cityLights = [
+    [118, 87], [126, 94], [134, 76], [144, 99], [154, 85], [165, 70], [175, 91], [188, 78],
+    [199, 97], [211, 83], [221, 65], [229, 91], [238, 76], [249, 95],
+  ];
+
+  return (
+    <svg
+      className="pixelRoomWorld"
+      viewBox="0 0 360 540"
+      preserveAspectRatio="xMidYMid meet"
+      shapeRendering="crispEdges"
+      aria-hidden="true"
+    >
+      <defs>
+        <clipPath id="cityWindowClip"><rect x="93" y="43" width="156" height="121" /></clipPath>
+        <pattern id="wallpaperPixel" width="12" height="16" patternUnits="userSpaceOnUse">
+          <rect width="12" height="16" fill="#675b5b" />
+          <rect x="5" y="3" width="2" height="2" fill="#87736f" opacity=".48" />
+          <rect x="4" y="8" width="1" height="3" fill="#7f6a67" opacity=".42" />
+          <rect x="7" y="8" width="1" height="3" fill="#7f6a67" opacity=".42" />
+          <rect x="5" y="12" width="2" height="1" fill="#8f7872" opacity=".38" />
+        </pattern>
+        <pattern id="floorPixel" width="24" height="12" patternUnits="userSpaceOnUse">
+          <rect width="24" height="12" fill="#4e3a2e" />
+          <rect y="11" width="24" height="1" fill="#2e241e" />
+          <rect x="12" width="1" height="12" fill="#33271f" opacity=".65" />
+          <rect x="2" y="2" width="8" height="1" fill="#6b5040" opacity=".34" />
+        </pattern>
+        <pattern id="rugPixel" width="18" height="18" patternUnits="userSpaceOnUse">
+          <rect width="18" height="18" fill="#66323b" />
+          <rect x="2" y="2" width="14" height="14" fill="none" stroke="#ac704e" strokeWidth="1" />
+          <rect x="7" y="7" width="4" height="4" fill="#d19a67" />
+          <rect x="8" y="3" width="2" height="2" fill="#303a52" />
+          <rect x="3" y="8" width="2" height="2" fill="#303a52" />
+          <rect x="13" y="8" width="2" height="2" fill="#303a52" />
+        </pattern>
+        <pattern id="guidePlaidPixel" width="8" height="8" patternUnits="userSpaceOnUse">
+          <rect width="8" height="8" fill="#6a3340" />
+          <rect y="3" width="8" height="1" fill="#a77c7e" />
+          <rect x="3" width="1" height="8" fill="#a77c7e" />
+          <rect y="6" width="8" height="1" fill="#27232a" />
+          <rect x="6" width="1" height="8" fill="#27232a" />
+        </pattern>
+      </defs>
+
+      {/* wall and floor */}
+      <rect className="pxVoid" width="360" height="540" />
+      <rect x="0" y="0" width="360" height="336" fill="url(#wallpaperPixel)" />
+      <polygon points="0,292 360,292 360,540 0,540" fill="url(#floorPixel)" />
+      <rect x="0" y="288" width="360" height="6" fill="#30231f" />
+      <rect x="0" y="294" width="360" height="2" fill="#7b5b49" opacity=".5" />
+
+      <SurfaceWear />
+
+      {/* exposed pipes */}
+      <rect x="309" y="0" width="4" height="258" fill="#55575a" />
+      <rect x="314" y="0" width="2" height="258" fill="#24282d" />
+      <rect x="336" y="0" width="3" height="248" fill="#55575a" />
+      <rect x="0" y="27" width="340" height="3" fill="#4f5155" />
+      <rect x="0" y="31" width="340" height="2" fill="#262a2f" />
+
+      {/* posters */}
+      <g className="pixelPosters">
+        <rect x="10" y="73" width="35" height="47" fill="#d6cec0" />
+        <rect x="13" y="76" width="29" height="41" fill="#a2453d" />
+        <rect x="19" y="77" width="2" height="8" fill="#342b35" />
+        <rect x="22" y="81" width="3" height="4" fill="#30323b" />
+        <rect x="27" y="79" width="2" height="6" fill="#30323b" />
+        <rect x="31" y="78" width="2" height="7" fill="#30323b" />
+        <rect x="35" y="81" width="3" height="4" fill="#30323b" />
+        <PixelBitmapText text="МОСКВА" x={15} y={88} color="#f3e3d3" />
+        <PixelBitmapText text="ВСЕГДА" x={15} y={98} color="#f3e3d3" />
+        <PixelBitmapText text="ДАЛЬШЕ" x={15} y={108} color="#f3e3d3" />
+        <rect x="13" y="128" width="42" height="38" fill="#d8d2c7" />
+        <rect x="17" y="132" width="16" height="25" fill="#33373c" />
+        <rect x="36" y="132" width="15" height="25" fill="#1a1d21" />
+        <rect x="21" y="136" width="5" height="9" fill="#a59a8d" />
+        <rect x="40" y="137" width="5" height="9" fill="#756b64" />
+      </g>
+
+      {/* window */}
+      <g className="pixelWindow">
+        <rect x="86" y="36" width="170" height="135" fill="#c1c3c4" />
+        <rect x="91" y="41" width="160" height="125" fill="#11243b" />
+        <rect x="94" y="44" width="154" height="119" fill="#1f4168" />
+        <rect x="94" y="44" width="154" height="29" fill="#2b5078" opacity=".66" />
+
+        <CityDepth />
+        <g clipPath="url(#cityWindowClip)" pointerEvents="none">
+          {Array.from({length: 28}, (_, i) => <path key={i} className="roomRain" d={`M${95+i*6} 24 l-4 13`} stroke="#a4c5dc" strokeWidth="1" opacity=".27" style={{animationDelay: `${-i*.137}s`, animationDuration: `${.85+(i%4)*.19}s`}} />)}
+          <g className="streetTraffic"><rect x="93" y="155" width="8" height="2" fill="#efd4a0"/><rect x="104" y="155" width="3" height="2" fill="#d97461"/></g>
+        </g>
+
+        {/* generated city architecture and animated windows */}
+        <rect x="169" y="41" width="4" height="125" fill="#cfd0ce" />
+        <rect x="91" y="99" width="160" height="4" fill="#cfd0ce" />
+        <rect className="pixelWindowGlint" x="100" y="50" width="4" height="94" fill="#7db9ed" opacity=".14" />
+        <rect className="pixelWindowGlint glintTwo" x="180" y="48" width="3" height="100" fill="#7db9ed" opacity=".1" />
+
+        {/* curtains */}
+        <polygon className="pixelCurtain leftCurtain" points="66,31 88,31 96,176 69,181" fill="#85848b" />
+        <rect x="72" y="39" width="3" height="132" fill="#66666f" opacity=".68" />
+        <rect x="80" y="38" width="3" height="136" fill="#6a6972" opacity=".62" />
+        <polygon className="pixelCurtain rightCurtain" points="253,31 276,31 273,178 247,171" fill="#85848b" />
+        <rect x="260" y="39" width="3" height="132" fill="#66666f" opacity=".68" />
+        <rect x="268" y="40" width="3" height="130" fill="#6a6972" opacity=".62" />
+      </g>
+
+      {/* window sill items */}
+      <rect x="94" y="166" width="158" height="8" fill="#726157" />
+      <rect x="97" y="174" width="154" height="3" fill="#463a34" />
+      <rect x="136" y="153" width="12" height="13" fill="#293c39" />
+      <rect x="138" y="150" width="8" height="4" fill="#4e7061" />
+      <rect x="201" y="149" width="17" height="17" fill="#685548" />
+      <rect x="205" y="140" width="3" height="12" fill="#355f41" />
+      <rect x="210" y="137" width="3" height="15" fill="#416f4b" />
+      <rect x="216" y="143" width="3" height="10" fill="#3a6746" />
+
+      {/* radiator */}
+      <g className="pixelRadiator">
+        <rect x="126" y="182" width="93" height="7" fill="#8a8682" />
+        {[132, 145, 158, 171, 184, 197, 210].map((x) => (
+          <g key={x}>
+            <rect x={x} y="188" width="8" height="62" fill="#777674" />
+            <rect x={x + 2} y="190" width="2" height="58" fill="#9a9790" opacity=".55" />
+          </g>
+        ))}
+        <rect x="121" y="246" width="103" height="5" fill="#4c4a48" />
+      </g>
+
+      {/* bed */}
+      <g className="pixelBed">
+        <polygon points="0,261 111,261 132,291 20,291" fill="#51483f" />
+        <polygon points="20,291 132,291 132,375 20,375" fill="#4a4039" />
+        <polygon points="0,261 20,291 20,375 0,345" fill="#3c322c" />
+        <polygon points="8,250 107,250 125,276 24,276" fill="#a9a39b" />
+        <polygon points="24,276 125,276 125,336 24,336" fill="#6f6d6d" />
+        <polygon points="14,256 53,256 68,276 28,276" fill="#d3cdc2" />
+        <rect x="33" y="282" width="82" height="5" fill="#88817b" opacity=".72" />
+        <rect x="33" y="291" width="79" height="4" fill="#4a4650" opacity=".65" />
+        <rect x="33" y="302" width="77" height="4" fill="#88817b" opacity=".64" />
+        <rect x="33" y="312" width="75" height="4" fill="#4a4650" opacity=".63" />
+        <polygon points="20,316 74,316 99,338 43,338" fill="#17233a" opacity=".88" />
+      </g>
+
+      <BedTextile />
+
+      {/* nightstand */}
+      <g className="pixelNightstand">
+        <rect x="102" y="239" width="35" height="43" fill="#513827" />
+        <rect x="105" y="243" width="29" height="12" fill="#62442f" />
+        <rect x="105" y="258" width="29" height="11" fill="#59402e" />
+        <rect x="105" y="272" width="29" height="7" fill="#4a3427" />
+        <rect x="126" y="248" width="3" height="2" fill="#c49a65" />
+        <rect x="126" y="262" width="3" height="2" fill="#c49a65" />
+        <rect x="106" y="228" width="24" height="11" fill="#242a2c" />
+        <rect x="108" y="230" width="20" height="6" fill="#111d20" />
+        <path d="M110 231h3v2h-3v2h3 M116 231h3v4h-3 M122 232v1 M122 234v1" stroke="#99b18c" strokeWidth="1" fill="none"/>
+        <rect x="121" y="230" width="12" height="4" fill="#73584a" />
+      </g>
+
+      {/* wall shelf */}
+      <g className="pixelShelf">
+        <rect x="260" y="157" width="74" height="7" fill="#573b2a" />
+        <rect x="265" y="132" width="7" height="25" fill="#87494a" />
+        <rect x="274" y="137" width="7" height="20" fill="#4f6b8b" />
+        <rect x="283" y="129" width="6" height="28" fill="#887a63" />
+        <rect x="291" y="135" width="8" height="22" fill="#54525a" />
+        <rect x="301" y="139" width="7" height="18" fill="#855247" />
+        <rect x="315" y="145" width="13" height="12" fill="#674f3d" />
+        <rect x="319" y="135" width="2" height="10" fill="#3a6946" />
+        <rect x="324" y="132" width="2" height="13" fill="#48744e" />
+        <rect x="314" y="138" width="2" height="8" fill="#49714c" />
+      </g>
+
+      {/* desk + work area */}
+      <g className="pixelDesk">
+        <polygon points="233,238 335,238 351,255 249,255" fill="#7a5335" />
+        <rect x="249" y="255" width="102" height="79" fill="#533725" />
+        <rect x="249" y="255" width="5" height="79" fill="#3a271e" />
+        <rect x="339" y="255" width="5" height="79" fill="#3a271e" />
+        <rect x="257" y="270" width="33" height="13" fill="#62442e" />
+        <rect x="310" y="270" width="31" height="13" fill="#62442e" />
+        <rect x="257" y="288" width="33" height="13" fill="#5b3f2c" />
+        <rect x="310" y="288" width="31" height="13" fill="#5b3f2c" />
+        <rect x="284" y="275" width="3" height="2" fill="#bd9060" />
+        <rect x="334" y="275" width="3" height="2" fill="#bd9060" />
+
+        {/* monitor */}
+        <rect x="270" y="190" width="58" height="42" fill="#11161d" />
+        <rect x="274" y="194" width="50" height="34" fill="#12344f" />
+        <rect className="pixelMonitorGlow" x="278" y="199" width="28" height="3" fill="#4cb7e9" />
+        <rect className="pixelMonitorGlow scanTwo" x="278" y="207" width="38" height="2" fill="#2f759d" />
+        <rect className="pixelMonitorGlow scanThree" x="278" y="215" width="24" height="2" fill="#61d8ff" />
+        <rect x="297" y="232" width="5" height="8" fill="#252a2e" />
+        <rect x="287" y="239" width="25" height="4" fill="#2a2d31" />
+
+        {/* laptop/keyboard */}
+        <polygon points="275,245 318,245 327,253 284,253" fill="#24272c" />
+        <rect x="281" y="246" width="34" height="1" fill="#6f777d" opacity=".7" />
+
+        {/* lamp */}
+        <rect x="247" y="219" width="4" height="30" fill="#30343a" />
+        <rect x="246" y="217" width="13" height="4" fill="#34393f" />
+        <rect className="pixelLampBulb" x="257" y="214" width="7" height="7" fill="#ffd887" />
+        <rect className="pixelLampAura" x="246" y="207" width="30" height="30" fill="#ffd887" opacity=".08" />
+
+        {/* desk clutter */}
+        <rect x="321" y="244" width="8" height="5" fill="#d2c0a4" />
+        <rect x="332" y="244" width="7" height="6" fill="#53453a" />
+      </g>
+
+      <PixelDeskChair />
+      <PixelLampGlowFields />
+
+      {/* fridge */}
+      <g className="pixelFridge">
+        <rect x="299" y="307" width="55" height="103" fill="#bebfbc" />
+        <rect x="302" y="311" width="49" height="43" fill="#c9cac6" />
+        <rect x="302" y="357" width="49" height="50" fill="#b4b6b3" />
+        <rect x="305" y="353" width="43" height="3" fill="#6d7070" />
+        <rect x="344" y="320" width="3" height="23" fill="#737778" />
+        <rect x="344" y="366" width="3" height="25" fill="#737778" />
+        <rect x="309" y="327" width="10" height="7" fill="#6f95b0" />
+        <rect x="323" y="334" width="7" height="8" fill="#d47e6e" />
+        <rect x="335" y="325" width="8" height="5" fill="#d9c596" />
+      </g>
+
+      {/* microwave */}
+      <g className="pixelMicrowave">
+        <rect x="306" y="281" width="42" height="26" fill="#c5c7ca" />
+        <rect x="310" y="285" width="26" height="17" fill="#1b2127" />
+        <rect x="339" y="286" width="5" height="3" fill="#434950" />
+        <rect x="339" y="292" width="5" height="3" fill="#5ab6ff" opacity=".58" />
+      </g>
+
+      {/* door + coat */}
+      <g className="pixelDoor">
+        <rect x="334" y="172" width="26" height="114" fill="#34251f" />
+        <rect x="338" y="177" width="18" height="104" fill="#453026" />
+        <rect x="340" y="183" width="14" height="44" fill="#3a2923" />
+        <rect x="340" y="232" width="14" height="43" fill="#3a2923" />
+        <rect x="339" y="229" width="16" height="2" fill="#654638" />
+        <rect x="340" y="236" width="3" height="3" fill="#d3aa6b" />
+        <rect x="324" y="205" width="2" height="25" fill="#7d7f82" />
+        <polygon points="320,229 332,229 337,262 320,262" fill="#a36778" opacity=".85" />
+      </g>
+
+      {/* hanging bulb */}
+      <g className="pixelBulb">
+        <rect x="326" y="36" width="2" height="93" fill="#292c30" />
+        <rect x="322" y="129" width="10" height="5" fill="#303236" />
+        <rect className="pixelBulbCore" x="320" y="134" width="14" height="14" fill="#f4ce71" />
+        <rect className="pixelBulbGlow" x="311" y="125" width="32" height="32" fill="#ffd97a" opacity=".08" />
+      </g>
+
+      {/* rug */}
+      <polygon points="74,345 252,345 292,494 46,494" fill="url(#rugPixel)" />
+      <polygon points="86,355 241,355 274,482 59,482" fill="none" stroke="#c3875f" strokeWidth="3" />
+
+      {/* slippers */}
+      <rect x="80" y="335" width="14" height="6" fill="#1c2940" transform="rotate(-8 80 335)" />
+      <rect x="93" y="337" width="14" height="6" fill="#17243a" transform="rotate(6 93 337)" />
+
+      {/* coffee table */}
+      <g className="pixelCoffeeTable">
+        <polygon points="116,349 195,349 220,368 141,368" fill="#795238" />
+        <rect x="141" y="368" width="79" height="8" fill="#563925" />
+        <rect x="151" y="395" width="57" height="4" fill="#483224" />
+        <rect x="159" y="390" width="27" height="5" fill="#777369" />
+        <rect x="159" y="390" width="24" height="1" fill="#b4ac96" />
+        <rect x="147" y="373" width="4" height="40" fill="#30221a" />
+        <rect x="207" y="373" width="4" height="40" fill="#30221a" />
+        <rect x="145" y="354" width="18" height="12" fill="#d3c2a4" />
+        <rect x="148" y="357" width="12" height="1" fill="#635348" />
+        <rect x="148" y="361" width="10" height="1" fill="#635348" />
+        <rect x="172" y="354" width="12" height="12" fill="#3b3430" />
+        <rect x="176" y="357" width="4" height="4" fill="#ba8f62" />
+        <rect x="190" y="352" width="9" height="12" fill="#cbb18a" />
+        <rect x="198" y="355" width="5" height="4" fill="none" stroke="#cbb18a" strokeWidth="1" />
+      </g>
+
+      {/* stool */}
+      <g className="pixelStool">
+        <rect x="213" y="397" width="31" height="9" fill="#70492f" />
+        <rect x="217" y="405" width="5" height="35" fill="#4b3022" />
+        <rect x="236" y="405" width="5" height="35" fill="#4b3022" />
+      </g>
+
+      {/* lower shelf foreground */}
+      <g className="pixelForegroundShelf">
+        <rect x="0" y="425" width="54" height="115" fill="#34261f" />
+        <rect x="5" y="431" width="44" height="31" fill="#1f2024" />
+        <rect x="5" y="468" width="44" height="29" fill="#24242a" />
+        <rect x="5" y="503" width="44" height="31" fill="#292328" />
+        <rect x="10" y="438" width="8" height="18" fill="#5c6c8b" />
+        <rect x="21" y="441" width="7" height="15" fill="#876648" />
+        <rect x="31" y="437" width="8" height="19" fill="#55505f" />
+        <path d="M10 488 L20 473 L31 488" fill="#171c28" />
+      </g>
+
+      {/* phone */}
+      {!phoneOwned && (
+        <g className="pixelWorldPhone">
+          <rect x="226" y="312" width="10" height="16" fill="#07111a" />
+          <rect className="pixelPhoneScreen" x="228" y="314" width="6" height="11" fill="#3dc6ff" opacity=".6" />
+        </g>
+      )}
+
+      <ApartmentClutter />
+      <LightingAndWear />
+
+
+      <g className="coffeeSteam" fill="none" stroke="#dccab3" opacity=".25">
+        <path d="M194 350v-4h-2v-5h2v-4"/><path d="M198 347v-4h2v-5"/>
+      </g>
+      <g className="roomNightShade" pointerEvents="none"><rect width="360" height="540" fill="#06162d" opacity=".36"/></g>
+      {/* atmospheric dust */}
+      <g className="pixelDust" fill="#b8d8e7">
+        <rect x="110" y="184" width="1" height="1" />
+        <rect x="188" y="204" width="1" height="1" />
+        <rect x="226" y="179" width="1" height="1" />
+        <rect x="269" y="248" width="1" height="1" />
+        <rect x="91" y="226" width="1" height="1" />
+      </g>
+    </svg>
+  );
+});
+
+export default function ApartmentScene({ introDone, phoneOwned, guideTalking, onGuide, onPhone, onWorkstation }) {
+  const [lampOn, setLampOn] = useState(true);
+  const [paused, setPaused] = useState(false);
+  const [actor, setActor] = useState({x:150, y:452, walking:false, facing:1});
+  const [activity, setActivity] = useState('Выбери предмет — персонаж подойдёт к нему');
+  const actorRef = useRef(actor);
+  const frame = useRef(0);
+  const motion = useRef(null);
+  const blocked = useRef(false);
+  blocked.current = guideTalking;
+  useEffect(() => {
+    const visibility = () => { if (motion.current) motion.current.last = 0; };
+    document.addEventListener('visibilitychange', visibility);
+    return () => { cancelAnimationFrame(frame.current); document.removeEventListener('visibilitychange', visibility); };
+  }, []);
+  useEffect(() => {
+    if (guideTalking) {
+      cancelAnimationFrame(frame.current);
+      motion.current = null;
+      actorRef.current = {...actorRef.current, walking:false};
+      setActor(actorRef.current);
+    }
+  }, [guideTalking]);
+  function approach(kind, callback) {
+    if (blocked.current) return;
+    cancelAnimationFrame(frame.current);
+    const current = actorRef.current;
+    const destinations = {guide:[205,452], phone:[279,375], desk:[300,345]};
+    const end = destinations[kind];
+    // Floor corridor passes below the coffee table and around the stool.
+    const points = [[current.x,462],[280,462],[280,end[1]],end];
+    if (kind === 'guide') points.splice(1, points.length-1, [205,462],end);
+    const reduced = paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finish = () => {
+      actorRef.current = {x:end[0], y:end[1], walking:false, facing:kind==='guide'?1:-1};
+      setActor(actorRef.current); motion.current=null; setActivity('Выбери предмет для взаимодействия'); callback();
+    };
+    if (reduced) { finish(); return; }
+    motion.current = {points, last:0};
+    setActivity(kind==='guide'?'Идём к проводнику…':kind==='phone'?'Подходим к телефону…':'Подходим к рабочему месту…');
+    function tick(now) {
+      const move = motion.current;
+      if (!move) return;
+      if (document.hidden) { move.last=0; frame.current=requestAnimationFrame(tick); return; }
+      const dt = move.last ? Math.min((now-move.last)/1000,.05) : 0;
+      move.last=now;
+      const [tx,ty]=move.points[0];
+      const p=actorRef.current, dx=tx-p.x, dy=ty-p.y, distance=Math.hypot(dx,dy), step=dt*100;
+      if (distance<=step || distance<.1) {
+        actorRef.current={...p,x:tx,y:ty}; move.points.shift();
+        if (!move.points.length) { finish(); return; }
+      } else actorRef.current={x:p.x+dx/distance*step,y:p.y+dy/distance*step,walking:true,facing:Math.abs(dx)>.1?Math.sign(dx):p.facing};
+      setActor({...actorRef.current}); frame.current=requestAnimationFrame(tick);
+    }
+    frame.current=requestAnimationFrame(tick);
   }
 
   return (
     <section
-      className="apartmentScene faux3dScene"
-      aria-label="Объёмная комната в московской панельке ночью"
-      onPointerMove={handlePointerMove}
-      onPointerLeave={resetPointer}
+      className={`apartmentScene pixelRoomScene ${lampOn ? "" : "lampOff"} ${paused ? "motionPaused" : ""}`}
+      aria-label="Пиксельная комната в московской панельке ночью"
     >
-      <div className="roomCamera">
-        <RoomWorld guideTalking={guideTalking} />
+      <div className="roomStage">
+      <div className="pixelRoomCamera">
+        <ApartmentPixelWorld phoneOwned={phoneOwned} />
+        <svg className="pixelRoomWorld actorLayer" viewBox="0 0 360 540" aria-hidden="true">
+          {actor.y < 414 && <PixelPerson x={actor.x} y={actor.y} walking={actor.walking} facing={actor.facing} />}
+          <PixelPerson x={248} y={414} guide talking={guideTalking} />
+          {actor.y >= 414 && <PixelPerson x={actor.x} y={actor.y} walking={actor.walking} facing={actor.facing} />}
+        </svg>
       </div>
-      <div className="roomAtmosphere" aria-hidden="true" />
-      <div className="roomScan" aria-hidden="true" />
+      <div className="pixelRoomAtmosphere" aria-hidden="true" />
+      <div className="pixelRoomNoise" aria-hidden="true" />
 
-      <button className="interactionTarget guideTarget" onClick={onGuide} aria-label="Поговорить с проводником">
+      <button className="interactionTarget guideTarget" onClick={() => approach("guide", onGuide)} aria-label="Поговорить с проводником">
         <InteractionMarker icon="!" text="Поговорить" />
       </button>
 
       <button
         className={`interactionTarget phoneTarget ${!introDone || phoneOwned ? "disabled" : "ready"}`}
-        onClick={onPhone}
+        onClick={() => approach("phone", onPhone)}
         disabled={!introDone || phoneOwned}
         aria-label={phoneOwned ? "Телефон уже куплен" : "Купить телефон"}
       >
@@ -460,14 +801,20 @@ export default function ApartmentScene({ introDone, phoneOwned, guideTalking, on
         />
       </button>
 
-      <button className="interactionTarget workstationTarget" onClick={onWorkstation} aria-label="Осмотреть рабочее место">
+      <button className="interactionTarget workstationTarget" onClick={() => approach("desk", onWorkstation)} aria-label="Осмотреть рабочее место">
         <InteractionMarker icon="⌘" text="Рабочее место" />
       </button>
 
+      </div>
+      <div className="roomControls">
+        <button type="button" aria-pressed={lampOn} onClick={() => setLampOn(v=>!v)}>{lampOn ? '◉ Свет' : '○ Свет'}</button>
+        <button type="button" aria-pressed={paused} onClick={() => setPaused(v=>!v)}>{paused ? '▶ Фон' : 'Ⅱ Фон'}</button>
+      </div>
+      <div className="roomActivity" role="status">{activity}</div>
       <div className="sceneLocation" aria-hidden="true">
         <span>СТАРТОВАЯ КОМНАТА</span>
         <strong>Панелька · ночь</strong>
-        <small>Живая faux-3D сцена · глубина, свет и персонажи без PNG</small>
+        <small>За окном дождь · 23:48</small>
       </div>
     </section>
   );

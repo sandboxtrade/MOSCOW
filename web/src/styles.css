@@ -2997,3 +2997,443 @@ button:focus-visible {
     font-size: 7px;
   }
 }
+
+/* v0.3.15 — live pixel-room rebuild */
+.pixelRoomScene {
+  --room-look-x: 0px;
+  --room-look-y: 0px;
+  position: relative;
+  overflow: hidden;
+  background: #07101a;
+  border-color: rgba(77, 176, 232, .28);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.pixelRoomCamera {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #07101a;
+}
+
+.pixelRoomWorld {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  transform: translate3d(var(--room-look-x), var(--room-look-y), 0) scale(1.012);
+  transform-origin: 50% 54%;
+  transition: transform .25s steps(4, end);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.pixelRoomWorld * {
+  shape-rendering: crispEdges;
+}
+
+.pxVoid {
+  fill: #07101a;
+}
+
+.pixelWindow {
+  filter: drop-shadow(0 7px 0 rgba(0, 0, 0, .16));
+}
+
+.pixelCityLight {
+  fill: #f8d785;
+  opacity: .42;
+  animation: pixelCityBlink 4.8s steps(2, end) infinite;
+}
+
+.pixelCityLight.light-1,
+.pixelCityLight.light-5,
+.pixelCityLight.light-9 { animation-delay: -1.2s; }
+.pixelCityLight.light-2,
+.pixelCityLight.light-6,
+.pixelCityLight.light-10 { animation-delay: -2.7s; }
+.pixelCityLight.light-3,
+.pixelCityLight.light-7,
+.pixelCityLight.light-11 { animation-delay: -3.4s; }
+.pixelCityLight.light-4,
+.pixelCityLight.light-8,
+.pixelCityLight.light-12 { animation-delay: -.7s; }
+
+.pixelWindowGlint {
+  animation: pixelWindowGlint 7s steps(5, end) infinite;
+}
+.pixelWindowGlint.glintTwo { animation-delay: -3.5s; }
+
+.pixelCurtain {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: pixelCurtainIdle 8s steps(5, end) infinite;
+}
+.rightCurtain { animation-delay: -2.8s; }
+
+.pixelMonitorGlow {
+  animation: pixelMonitorPulse 2.8s steps(3, end) infinite;
+}
+.pixelMonitorGlow.scanTwo { animation-delay: -.8s; }
+.pixelMonitorGlow.scanThree { animation-delay: -1.5s; }
+
+.pixelLampBulb,
+.pixelBulbCore {
+  animation: pixelWarmLight 5.5s steps(3, end) infinite;
+}
+
+.pixelLampAura,
+.pixelBulbGlow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pixelWarmAura 5.5s steps(4, end) infinite;
+}
+
+.pixelWorldPhone {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pixelPhoneIdle 2.8s steps(4, end) infinite;
+}
+
+.pixelPhoneScreen {
+  animation: pixelPhoneScreen 2.8s steps(2, end) infinite;
+}
+
+.pixelDust {
+  opacity: .24;
+  animation: pixelDustDrift 9s steps(9, end) infinite alternate;
+}
+
+.pixelPersonShadow {
+  fill: rgba(0, 0, 0, .42);
+}
+
+.pixelPersonBody {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: pixelPersonIdle 4.5s steps(4, end) infinite;
+}
+
+.guidePixel .pixelPersonBody {
+  animation-delay: -1.7s;
+}
+
+.guidePixel.talking .pixelPersonBody {
+  animation: pixelPersonTalk 1.25s steps(3, end) infinite;
+}
+
+.pxOutline { fill: #0b0d10; }
+.pxLeg { fill: #151a20; }
+.playerPixel .pxLeg { fill: #111820; }
+.pxShoe { fill: #d7d9db; }
+.pxShoeLight { fill: #f7f7f6; }
+.pxTorsoShade { fill: rgba(4, 7, 10, .24); }
+.pxHood { fill: #1d232a; }
+.guidePixel .pxHood { fill: #512b35; }
+.pxHoodInner { fill: #d7d0c8; opacity: .74; }
+.pxPlayerZip { fill: #547b94; opacity: .52; }
+.pxSkin { fill: #b87958; }
+.pxSkinShade { fill: #8d5b46; }
+.pxHair { fill: #151316; }
+.pxHairWarm { fill: #b25d39; opacity: .75; }
+.pxBrow,
+.pxEye,
+.pxMouth { fill: #251b1b; }
+.pxFaceLine { fill: #754537; }
+.pxBagStrap { fill: #111318; }
+.pxBag { fill: #272329; }
+.pxBagZip { fill: #b78a64; }
+.pxScar { fill: #69362f; }
+
+.pixelRoomAtmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 48% 16%, rgba(77, 157, 224, .13), transparent 26%),
+    radial-gradient(circle at 74% 41%, rgba(255, 198, 101, .08), transparent 18%),
+    linear-gradient(180deg, transparent 48%, rgba(0, 0, 0, .14));
+  box-shadow: inset 0 0 72px rgba(0, 0, 0, .23);
+}
+
+.pixelRoomNoise {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: .07;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.025) 4px),
+    repeating-linear-gradient(90deg, transparent 0 5px, rgba(0,0,0,.025) 6px);
+  mix-blend-mode: overlay;
+}
+
+.pixelRoomScene .guideTarget {
+  left: 62%;
+  top: 60%;
+  width: 18%;
+  height: 22%;
+}
+
+.pixelRoomScene .phoneTarget {
+  left: 58%;
+  top: 53%;
+  width: 14%;
+  height: 13%;
+}
+
+.pixelRoomScene .workstationTarget {
+  left: 67%;
+  top: 35%;
+  width: 27%;
+  height: 22%;
+}
+
+.pixelRoomScene .guideTarget .interactionMarker {
+  left: 50%;
+  top: 2%;
+  transform: translateX(-50%);
+}
+
+.pixelRoomScene .phoneTarget .interactionMarker {
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%);
+}
+
+.pixelRoomScene .workstationTarget .interactionMarker {
+  right: 5%;
+  top: 7%;
+}
+
+.pixelRoomScene .interactionIcon {
+  border-radius: 0;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, .35);
+}
+
+.pixelRoomScene .interactionPulse {
+  animation: pixelMarkerPulse 1.8s steps(3, end) infinite;
+}
+
+.pixelRoomScene .sceneLocation {
+  z-index: 12;
+  border-left-color: #64ceff;
+  background: rgba(4, 14, 23, .84);
+  backdrop-filter: none;
+}
+
+@keyframes pixelCityBlink {
+  0%, 100% { opacity: .22; }
+  50% { opacity: .85; }
+}
+
+@keyframes pixelWindowGlint {
+  0%, 100% { opacity: .07; transform: translateX(0); }
+  50% { opacity: .2; transform: translateX(3px); }
+}
+
+@keyframes pixelCurtainIdle {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(1px); }
+}
+
+@keyframes pixelMonitorPulse {
+  0%, 100% { opacity: .52; }
+  50% { opacity: 1; }
+}
+
+@keyframes pixelWarmLight {
+  0%, 100% { opacity: .82; }
+  50% { opacity: 1; }
+}
+
+@keyframes pixelWarmAura {
+  0%, 100% { opacity: .05; transform: scale(1); }
+  50% { opacity: .13; transform: scale(1.08); }
+}
+
+@keyframes pixelPhoneIdle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1px); }
+}
+
+@keyframes pixelPhoneScreen {
+  0%, 100% { opacity: .5; }
+  50% { opacity: .95; }
+}
+
+@keyframes pixelDustDrift {
+  to { transform: translate(6px, -9px); opacity: .36; }
+}
+
+@keyframes pixelPersonIdle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1px); }
+}
+
+@keyframes pixelPersonTalk {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translate(1px, -1px); }
+}
+
+@keyframes pixelMarkerPulse {
+  0%, 100% { opacity: .55; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 560px) {
+  .pixelRoomWorld {
+    transform: translate3d(var(--room-look-x), var(--room-look-y), 0) scale(1.025);
+  }
+
+  .pixelRoomScene .guideTarget {
+    left: 61%;
+    top: 59%;
+    width: 20%;
+    height: 23%;
+  }
+
+  .pixelRoomScene .phoneTarget {
+    left: 57%;
+    top: 52%;
+    width: 16%;
+    height: 14%;
+  }
+
+  .pixelRoomScene .workstationTarget {
+    left: 65%;
+    top: 34%;
+    width: 29%;
+    height: 23%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixelRoomWorld,
+  .pixelRoomWorld *,
+  .pixelRoomScene .interactionPulse {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* v0.3.16 — detailed room art polish (Moscow-specific, not SOVRA UI) */
+.pixelRoomScene {
+  background: #080d16;
+  border-color: rgba(80, 162, 210, .30);
+  contain: paint;
+}
+.pixelRoomWorld {
+  shape-rendering: crispEdges;
+  backface-visibility: hidden;
+}
+.pixelRoomScene .interactionIcon {
+  background: rgba(5, 18, 31, .92);
+  border-color: rgba(97, 189, 240, .8);
+  color: #b3eaff;
+  box-shadow: 2px 3px 0 rgba(2, 8, 13, .5), inset 0 0 0 2px rgba(49, 122, 178, .1);
+}
+.pixelRoomScene .interactionTarget:hover:not(:disabled) .interactionIcon,
+.pixelRoomScene .interactionTarget:focus-visible:not(:disabled) .interactionIcon {
+  background: #0a2a42;
+  border-color: #8adeff;
+}
+.pixelRoomScene .sceneLocation {
+  background: rgba(3, 14, 25, .9);
+  border-left: 3px solid #69c8fb;
+}
+.pixelRoomAtmosphere {
+  background:
+    radial-gradient(circle at 49% 17%, rgba(77, 157, 224, .10), transparent 27%),
+    radial-gradient(circle at 79% 44%, rgba(255, 195, 100, .06), transparent 25%),
+    linear-gradient(180deg, rgba(0, 1, 4, .02), rgba(1, 4, 8, .13));
+  box-shadow: inset 0 0 48px rgba(0, 0, 0, .15);
+}
+.pixelLampFields {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pixelLampRoomLight 6.4s steps(4, end) infinite;
+}
+.beaconLight { animation: cityBeacon 4s steps(2, end) infinite; }
+.pixelCityLight.delay-0 { animation-delay: -1.6s; }
+.pixelCityLight.delay-2 { animation-delay: -3.5s; }
+.pixelCityLight.delay-4 { animation-delay: -.8s; }
+.pixelCityLight.delay-6 { animation-delay: -2.3s; }
+.windowReflections {
+  animation: pixelGlints 10s steps(5, end) infinite;
+}
+@keyframes pixelLampRoomLight {
+  0%,100% { opacity: .94; }
+  50% { opacity: .67; }
+}
+@keyframes cityBeacon {
+  0%,70%,100% { opacity:.18; }
+  71%,81% { opacity: .94; }
+}
+@keyframes pixelGlints {
+  50% { opacity: .6; transform: translateX(1px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pixelLampFields, .beaconLight, .windowReflections { animation: none !important; }
+}
+
+/* v0.3.17 — articulated actors and a stable, interactive room stage. */
+.pixelRoomScene { container-type: size; background: #090e17; }
+.roomStage { position:absolute; width:min(100cqw, 66.6667cqh); height:min(150cqw, 100cqh); left:50%; top:50%; transform:translate(-50%,-50%); }
+.pixelRoomWorld { transform:none; transition:none; }
+.pixelRoomScene .pixelPersonBody, .pixelRoomScene .guidePixel.talking .pixelPersonBody { animation:none; }
+.personUpperRig { animation:roomBreath 4.8s steps(2,end) infinite; }
+.guidePixel .personUpperRig { animation-delay:-2s; }
+.personHeadRig { animation:roomHead 9s steps(1,end) infinite; }
+.personArmRig { transform-box:fill-box; transform-origin:50% 0%; }
+.personLegRig { transform-box:view-box; transform-origin:0px -26px; }
+.walking .personLegRig.left { animation:roomStride .56s steps(4,end) infinite; }
+.walking .personLegRig.right { animation:roomStride .56s steps(4,end) -.28s infinite; }
+.walking .personArmRig.left { animation:roomArm .56s steps(4,end) -.28s infinite; }
+.walking .personArmRig.right { animation:roomArm .56s steps(4,end) infinite; }
+.walking .personUpperRig { animation:roomWalkBob .28s steps(2,end) infinite; }
+.talking .personArmRig.right { animation:roomGesture 1.8s steps(4,end) infinite; }
+.talking .pxMouth { animation:roomSpeech .38s steps(2,end) infinite; }
+.pxEye { transform-box:fill-box; transform-origin:center; animation:roomBlink 5.7s steps(1,end) infinite; }
+.guidePixel .pxEye { animation-delay:-2.3s; }
+.roomRain { animation:roomRainFall 1s linear infinite; }
+.streetTraffic { animation:roomTraffic 13s linear infinite; }
+.coffeeSteam { animation:roomSteam 4s steps(8,end) infinite; }
+.pixelWorldPhone { animation:none; }
+.pixelCityLight { animation-duration:23s; }
+.roomNightShade { opacity:0; transition:opacity .35s; }
+.lampOff .roomNightShade { opacity:1; }
+.lampOff .pixelLampFields, .lampOff .pixelLampAura, .lampOff .pixelBulbGlow { visibility:hidden; }
+.lampOff .pixelBulbCore, .lampOff .pixelLampBulb { animation:none; fill:#776b52; }
+.roomControls { position:absolute; z-index:15; bottom:14px; right:12px; display:flex; gap:5px; }
+.roomControls button { padding:8px 9px; background:#0b1724ed; border:1px solid #53616a; color:#c5c6bf; font:10px monospace; cursor:pointer; min-height:34px; }
+.roomControls button[aria-pressed=true] { border-color:#ad9162; color:#edcf96; }
+.roomControls button:focus-visible { outline:2px solid #edcf96; outline-offset:3px; }
+.roomActivity { position:absolute; bottom:57px; left:12px; right:12px; text-align:center; color:#bbb8ae; font:10px monospace; pointer-events:none; text-shadow:0 2px 3px #000; }
+.pixelRoomScene .sceneLocation { top:18px; bottom:auto; background:transparent; border-left:2px solid #ad9162; padding:6px 9px; box-shadow:none; }
+.pixelRoomScene .sceneLocation small { color:#9ca7b0; }
+.pixelRoomScene .interactionMarker { background:transparent; }
+.pixelRoomScene .interactionText { font-size:10px; }
+.motionPaused .pixelRoomWorld:not(.actorLayer) *, .motionPaused .interactionPulse { animation-play-state:paused !important; }
+@keyframes roomBreath { 50% { transform:translateY(1px); } }
+@keyframes roomHead { 35%,42% { transform:translateX(1px); } }
+@keyframes roomStride { 0%,100% { transform:translate(0,0); } 25% { transform:translate(3px,-2px); } 50% { transform:translate(0,-1px); } 75% { transform:translate(-3px,0); } }
+@keyframes roomArm { 0%,100% { transform:rotate(-6deg); } 50% { transform:rotate(7deg); } }
+@keyframes roomWalkBob { 50% { transform:translateY(-1px); } }
+@keyframes roomGesture { 30%,60% { transform:rotate(-9deg); } 80% { transform:rotate(3deg); } }
+@keyframes roomBlink { 0%,94%,98%,100% { transform:scaleY(1); } 95%,97% { transform:scaleY(.1); } }
+@keyframes roomSpeech { 50% { height:2px; } }
+@keyframes roomRainFall { to { transform:translate(-26px,150px); } }
+@keyframes roomTraffic { 0% { transform:translateX(-20px); opacity:0; } 8%,85% { opacity:.7; } 100% { transform:translateX(170px); opacity:0; } }
+@keyframes roomSteam { 0% { transform:translateY(2px); opacity:0; } 35% { opacity:.25; } 100% { transform:translate(2px,-11px); opacity:0; } }
+@media (prefers-reduced-motion:reduce) { .roomNightShade { transition:none; } }
+
+.actorLayer { pointer-events:none; }
+.lampOff .actorLayer { filter:brightness(.72); }
+/* Keep guide interaction clear of his face and the phone. */
+.pixelRoomScene .guideTarget .interactionMarker { top:-28%; left:72%; }
+
+.pixelRoomScene .phoneTarget .interactionMarker { left:-10%; top:0%; }
